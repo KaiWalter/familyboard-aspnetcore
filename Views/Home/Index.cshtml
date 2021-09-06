@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Family Board";
+}
+
+<div class="board">
+
+    <div class="imageContainer">
+        <div class="imageOverlay">
+            <div class="clock">
+                Loading...
+            </div>
+            <div class="imageCreated">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div id="calendar">
+            <div>Loading...</div>
+        </div>
+        <div class="statusBar">
+            <div id="message">
+                Loading...
+            </div>
+            <div id="status">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        startTime();
+        startMainLoop();
+    });
+</script>
+}
