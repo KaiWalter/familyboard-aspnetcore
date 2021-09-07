@@ -2,7 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FamilyBoard
+namespace FamilyBoard.Application.Utils
 {
     public class DateTimeConverter : JsonConverter<DateTime>
 {

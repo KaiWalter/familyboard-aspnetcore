@@ -1,4 +1,4 @@
-namespace FamilyBoard.Models
+namespace FamilyBoard.Application.Models
 {
     public class ErrorViewModel
     {

@@ -1,16 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using FamilyBoard.Application.Utils;
+using FamilyBoard.Core.Calendar;
 
 namespace FamilyBoard
 {
@@ -30,7 +30,13 @@ namespace FamilyBoard
                 options.MinimumSameSitePolicy = SameSiteMode.Lax;
             });
 
-            services.AddMicrosoftIdentityWebAppAuthentication(Configuration);
+            string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
+
+            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(Configuration)
+                .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+                .AddMicrosoftGraph(Configuration.GetSection("DownstreamApi"))
+                .AddInMemoryTokenCaches();
 
             services.AddControllersWithViews(options =>
                     {
@@ -46,8 +52,23 @@ namespace FamilyBoard
                     });
 
             services.AddRazorPages();
+            services.Configure<RazorViewEngineOptions>(o =>
+                {
+                    o.ViewLocationFormats.Clear();
+                    o.ViewLocationFormats.Add("/Application/Views/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    o.ViewLocationFormats.Add("/Application/Views/Shared/{0}" + RazorViewEngine.ViewExtension);
+                });
+
+            // Add the UI support to handle claims challenges
+            services.AddServerSideBlazor()
+               .AddMicrosoftIdentityConsentHandler();
 
             // to do https://github.com/ligershark/WebOptimizer
+
+            // Add all calendar services - sequence listed here reflects sequence calendar types are displayed on calendar within a day
+            services.AddTransient<ICalendarService, SchoolHolidaysService>();
+            services.AddTransient<ICalendarService, PublicHolidaysService>();
+            services.AddTransient<ICalendarService, OutlookService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
