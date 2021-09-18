@@ -11,6 +11,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using FamilyBoard.Application.Utils;
 using FamilyBoard.Core.Calendar;
+using FamilyBoard.Core.Cache;
 
 namespace FamilyBoard
 {
@@ -36,7 +37,12 @@ namespace FamilyBoard
                 .AddMicrosoftIdentityWebApp(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
                 .AddMicrosoftGraph(Configuration.GetSection("DownstreamApi"))
-                .AddInMemoryTokenCaches();
+                .AddDistributedTokenCaches();
+
+            services.AddDiskCache(options =>
+            {
+                options.CachePath = ".tokencache";
+            });
 
             services.AddControllersWithViews(options =>
                     {
