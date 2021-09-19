@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
-using Microsoft.Graph.Extensions;
 using Microsoft.Identity.Web;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using FamilyBoard.Core.Calendar;
+using FamilyBoard.Application.Models;
+using System.Globalization;
 
 namespace FamilyBoard.Application.Controllers
 {
@@ -44,13 +44,41 @@ namespace FamilyBoard.Application.Controllers
             var startTime = DateTime.Today.AddDays(-7);
             var endTime = DateTime.Now.AddDays(21);
 
-            foreach(var calendarService in _calendarServices)
+            foreach (var calendarService in _calendarServices)
             {
-                var serviceResult = await calendarService.GetEvents(startTime,endTime,false,false);
+                var serviceResult = await calendarService.GetEvents(startTime, endTime, false, false);
                 result.AddRange(serviceResult);
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("dateformatinfo")]
+        public ActionResult<DateFormatInfo> GetDateFormatInfo()
+        {
+            var ci = new CultureInfo(_configuration["Calendar:Culture"] ?? "de-DE");
+            var dtf = ci.DateTimeFormat;
+
+            var result = new DateFormatInfo
+            {
+                MonthNames = new List<string>(12),
+                WeekDayNames = new List<string>(7)
+            };
+
+            for (var m = 1; m <= 12; m++)
+            {
+                result.MonthNames.Add(dtf.GetAbbreviatedMonthName(m));
+            }
+
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Monday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Tuesday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Wednesday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Thursday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Friday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Saturday));
+            result.WeekDayNames.Add(dtf.GetAbbreviatedDayName(System.DayOfWeek.Sunday));
+
+            return result;
         }
     }
 }

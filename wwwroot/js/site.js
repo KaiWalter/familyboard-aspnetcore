@@ -48,15 +48,29 @@ function putStatus(status) {
 // --------------------------------------------------------------------------------
 // update calendar
 
-let monthNames = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-let weekDayNames = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+let monthNames;
+let weekDayNames;
 
 function updateCalendar() {
+    if (!monthNames || !weekDayNames) {
+        $.ajax({
+            type: "get",
+            url: "/api/calendar/dateformatinfo",
+            context: document.body,
+            success: function (data) {
+                if (data) {
+                    monthNames = data.monthNames;
+                    weekDayNames = data.weekDayNames;
+                }
+            }
+        });
+    }
+
     $.ajax({
         type: "get",
         url: "/api/calendar",
         context: document.body,
-        success: function(data) {
+        success: function (data) {
             if (data) {
                 renderCalendar(data);
             }
@@ -193,7 +207,7 @@ function updateImage() {
         type: "get",
         url: "/api/image",
         context: document.body,
-        success: function(data) {
+        success: function (data) {
             renderImage(data);
         }
     });
@@ -203,7 +217,7 @@ function updateImage() {
 function renderImage(imageObj) {
     putMessage("updating image");
 
-    $("<img/>").attr("src", imageObj.src).on("load", function() {
+    $("<img/>").attr("src", imageObj.src).on("load", function () {
         $(this).remove(), $(".imageContainer").css({
             background: "#000 url(" + imageObj.src + ") center center",
             backgroundSize: "cover",
