@@ -57,7 +57,6 @@ function updateCalendar() {
         url: "/api/calendar",
         context: document.body,
         success: function(data) {
-            console.log(data);
             if (data) {
                 renderCalendar(data);
             }
@@ -210,7 +209,12 @@ function renderImage(imageObj) {
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat"
         });
-        $(".imageCreated").html(imageObj.label);
+
+        var imageCreatedLabel = "";
+        if (imageObj.month && imageObj.year) {
+            imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
+        }
+        $(".imageCreated").html(imageCreatedLabel);
     });
 
     putMessage("");

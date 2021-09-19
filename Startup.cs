@@ -12,6 +12,7 @@ using Microsoft.Identity.Web.UI;
 using FamilyBoard.Application.Utils;
 using FamilyBoard.Core.Calendar;
 using FamilyBoard.Core.Cache;
+using FamilyBoard.Core.Image;
 
 namespace FamilyBoard
 {
@@ -58,11 +59,11 @@ namespace FamilyBoard
                     });
 
             services.AddRazorPages();
-            services.Configure<RazorViewEngineOptions>(o =>
+            services.Configure<RazorViewEngineOptions>(options =>
                 {
-                    o.ViewLocationFormats.Clear();
-                    o.ViewLocationFormats.Add("/Application/Views/{1}/{0}" + RazorViewEngine.ViewExtension);
-                    o.ViewLocationFormats.Add("/Application/Views/Shared/{0}" + RazorViewEngine.ViewExtension);
+                    options.ViewLocationFormats.Clear();
+                    options.ViewLocationFormats.Add("/Application/Views/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    options.ViewLocationFormats.Add("/Application/Views/Shared/{0}" + RazorViewEngine.ViewExtension);
                 });
 
             // Add the UI support to handle claims challenges
@@ -75,6 +76,8 @@ namespace FamilyBoard
             services.AddTransient<ICalendarService, SchoolHolidaysService>();
             services.AddTransient<ICalendarService, PublicHolidaysService>();
             services.AddTransient<ICalendarService, OutlookService>();
+
+            services.AddTransient<IImageService, OnedriveService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
