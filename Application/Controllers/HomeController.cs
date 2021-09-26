@@ -41,6 +41,8 @@ namespace FamilyBoard.Application.Controllers
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<IActionResult> Index()
         {
+            _logger.LogTrace("REQUEST:" + nameof(Index));
+
             User currentUser = null;
 
             try

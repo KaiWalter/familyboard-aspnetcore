@@ -39,6 +39,8 @@ namespace FamilyBoard.Application.Controllers
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<ActionResult<List<CalendarEntry>>> GetCalendarEntries()
         {
+            _logger.LogTrace("REQUEST:" + nameof(GetCalendarEntries));
+
             var result = new List<CalendarEntry>();
 
             var startTime = DateTime.Today.AddDays(-7);
@@ -56,6 +58,8 @@ namespace FamilyBoard.Application.Controllers
         [HttpGet("dateformatinfo")]
         public ActionResult<DateFormatInfo> GetDateFormatInfo()
         {
+            _logger.LogTrace("REQUEST:" + nameof(GetDateFormatInfo));
+
             var ci = new CultureInfo(_configuration["Calendar:Culture"] ?? "de-DE");
             var dtf = ci.DateTimeFormat;
 

@@ -38,6 +38,8 @@ namespace FamilyBoard.Application.Controllers
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<ActionResult<ImageResponse>> GetNextImage()
         {
+            _logger.LogTrace("REQUEST:" + nameof(GetNextImage));
+
             var result = await _imageService.GetNextImage();
             return Ok(result);
         }
