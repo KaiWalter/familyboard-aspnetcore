@@ -147,7 +147,9 @@ function renderCalendar(events) {
 
             // reset cell
             let dayCell = $("<div/>");
-            dayCell.attr("id", "day" + i).addClass("day");
+            let dayId = "day" + i;
+            let dayContentId = "dayContent" + i;
+            dayCell.attr("id", dayId).addClass("day");
             // month name on first element or first of month
             let monthTitle = "";
             if (i === 0 || iDate.getDate() == 1) {
@@ -158,7 +160,7 @@ function renderCalendar(events) {
                 "<span class='dayofweek'>" + weekDayNames[wd] + "</span>&nbsp;" +
                 "<span class='dayofmonth'>" + iDate.getDate().toString().padStart(2, "0") + "</span>";
 
-            dayCell.html("<div id='dayHeader'><div class='day_title'>" + dayTitle + "</div></div><div id='dayContent'></div>");
+            dayCell.html("<div class='dayHeader'><div class='day_title'>" + dayTitle + "</div></div><div id='" + dayContentId + "' class='dayContent'></div>");
             dayCell.removeClass("today").removeClass("monthfirst").addClass("day");
             $("#calendar").append(dayCell);
 
@@ -189,10 +191,10 @@ function renderCalendar(events) {
                 }
             });
 
-            $("#day" + i + " > #dayContent").html(content);
+            $("#" + dayId + " > #" + dayContentId).html(content);
 
             if (isToday) {
-                $("#day" + i).toggleClass("today");
+                $(dayId).toggleClass("today");
             }
         }
 

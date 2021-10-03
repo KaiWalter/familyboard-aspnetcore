@@ -99,12 +99,12 @@
     font-size: large;
 }
 
-#dayHeader {
+.dayHeader {
     text-align: center;
     font-size: 2em;
 }
 
-#dayContent {
+.dayContent {
     text-align: left;
     font-size: 2em;
 }
@@ -140,7 +140,9 @@
     line-height: 1em;
 }
 
-.primary_calendar {}
+.primary_calendar {
+    border-left: 2px solid white;
+}
 
 .secondary_calendar {
     border-left: 2px solid blue;
