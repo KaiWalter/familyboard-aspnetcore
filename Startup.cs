@@ -42,7 +42,7 @@ namespace FamilyBoard
 
             services.AddDiskCache(options =>
             {
-                options.CachePath = ".tokencache";
+                options.CachePath = System.Environment.GetEnvironmentVariable("TOKENCACHE") ?? ".tokencache";
             });
 
             services.AddControllersWithViews(options =>

@@ -38,8 +38,8 @@ jobs:
     - name: Publish
       run: dotnet publish -r linux-arm
 
-    - name: List
-      run: pwd && ls -laR
+    # - name: List
+    #   run: pwd && ls -laR
 
     - name: Set up Docker Buildx      
       uses: crazy-max/ghaction-docker-buildx@v1      

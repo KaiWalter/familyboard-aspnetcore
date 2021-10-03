@@ -1,6 +1,6 @@
-# familyboard-aspnetcore
+# FamilyBoard in ASP.NET Core
 
-FamilyBoard in ASP.NET Core
+This implementation of a family board - displaying a random images selected from `OneDrive` and combining various `Outlook` calendars is a reduced port of <https://github.com/KaiWalter/family-board-py>.
 
 ## Hints
 

@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm32v7
 
+# certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
 ENV CERTPASS=$(pwgen)
 RUN openssl req -x509 \
@@ -17,13 +18,17 @@ RUN openssl pkcs12 -export \
     -passout env:CERTPASS
 
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_URLS="https://+:5001"
+ENV ASPNETCORE_URLS="https://+:5001;http://+:5000"
 ENV ASPNETCORE_HTTPS_PORT=5001
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password=$CERTPASS
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=$CERTNAME
 
+# token cache configuration
 WORKDIR /app
+RUN mkdir .tokencache
+ENV TOKENCACHE=/app/.tokencache/accessTokens.json
 
+# application
 COPY ./bin/Debug/net5.0/linux-arm/publish .
 
 ENTRYPOINT ["dotnet", "familyboard-aspnetcore.dll"]
