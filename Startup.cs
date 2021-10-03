@@ -70,13 +70,12 @@ namespace FamilyBoard
             services.AddServerSideBlazor()
                .AddMicrosoftIdentityConsentHandler();
 
-            // to do https://github.com/ligershark/WebOptimizer
-
             // Add all calendar services - sequence listed here reflects sequence calendar types are displayed on calendar within a day
             services.AddTransient<ICalendarService, SchoolHolidaysService>();
             services.AddTransient<ICalendarService, PublicHolidaysService>();
             services.AddTransient<ICalendarService, OutlookService>();
 
+            // Add only one image service
             services.AddTransient<IImageService, OnedriveService>();
         }
 

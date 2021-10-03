@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace FamilyBoard.Core.Cache
 {
@@ -13,9 +14,12 @@ namespace FamilyBoard.Core.Cache
         private readonly string _cachePath;
         private Dictionary<string, byte[]> _cache;
 
-        public DiskCacheHandler(IOptions<DiskCacheOptions> options)
+        private readonly ILogger<DiskCacheHandler> _logger;
+
+        public DiskCacheHandler(IOptions<DiskCacheOptions> options, ILogger<DiskCacheHandler> logger)
         {
             _cachePath = options.Value.CachePath;
+            _logger = logger;
 
             this.ReadFromDisk(CancellationToken.None).Wait();
         }
@@ -54,7 +58,7 @@ namespace FamilyBoard.Core.Cache
             if (_cache.ContainsKey(key))
             {
                 _cache.Remove(key);
-               await WriteToDisk(token);
+                await WriteToDisk(token);
             }
         }
 
@@ -88,6 +92,7 @@ namespace FamilyBoard.Core.Cache
         {
             var json = JsonSerializer.Serialize(_cache);
             await File.WriteAllTextAsync(_cachePath, json, token);
+            _logger.LogTrace($"token written to cache {_cachePath}");
         }
 
         private async Task ReadFromDisk(CancellationToken token = default)
@@ -96,10 +101,12 @@ namespace FamilyBoard.Core.Cache
             {
                 string json = await File.ReadAllTextAsync(_cachePath);
                 _cache = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(json);
+                _logger.LogInformation($"token retrieved from cache {_cachePath}");
             }
             else
             {
                 _cache = new Dictionary<string, byte[]>();
+                _logger.LogWarning($"no token cache found in {_cachePath}");
                 await this.WriteToDisk(token);
             }
         }
