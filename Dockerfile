@@ -23,9 +23,7 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Password=$CERTPASS
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=$CERTNAME
 
 WORKDIR /app
-RUN mkdir wwwroot
 
-COPY ./bin/Debug/net5.0/linux-arm .
-COPY ./wwwroot ./wwwroot
+COPY ./bin/Debug/net5.0/linux-arm/publish .
 
 ENTRYPOINT ["dotnet", "familyboard-aspnetcore.dll"]
