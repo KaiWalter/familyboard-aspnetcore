@@ -92,7 +92,7 @@ namespace FamilyBoard.Core.Cache
         {
             var json = JsonSerializer.Serialize(_cache);
             await File.WriteAllTextAsync(_cachePath, json, token);
-            _logger.LogTrace($"token written to cache {_cachePath}");
+            _logger.LogInformation($"token written to cache {_cachePath}");
         }
 
         private async Task ReadFromDisk(CancellationToken token = default)

@@ -13,6 +13,9 @@ using FamilyBoard.Application.Utils;
 using FamilyBoard.Core.Calendar;
 using FamilyBoard.Core.Cache;
 using FamilyBoard.Core.Image;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
+using System;
 
 namespace FamilyBoard
 {
@@ -27,6 +30,16 @@ namespace FamilyBoard
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var tokenCache = System.Environment.GetEnvironmentVariable("TOKENCACHE") ?? "./.tokencache";
+            var tokenPath = Path.GetDirectoryName(tokenCache);
+
+            services.AddDataProtection()
+                    // This helps surviving a restart: a same app will find back its keys. Just ensure to create the folder.
+                    .PersistKeysToFileSystem(new DirectoryInfo(tokenPath))
+                    // This helps surviving a site update: each app has its own store, building the site creates a new app
+                    .SetApplicationName("FamilyBoard")
+                    .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -42,7 +55,7 @@ namespace FamilyBoard
 
             services.AddDiskCache(options =>
             {
-                options.CachePath = System.Environment.GetEnvironmentVariable("TOKENCACHE") ?? ".tokencache";
+                options.CachePath = tokenCache;
             });
 
             services.AddControllersWithViews(options =>
