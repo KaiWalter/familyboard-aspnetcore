@@ -25,8 +25,8 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Path=$CERTNAME
 
 # token cache configuration
 WORKDIR /app
-RUN mkdir .tokencache
-ENV TOKENCACHE=/app/.tokencache/accessTokens.json
+RUN mkdir .tokenkeycache
+ENV TOKENKEYCACHEPATH=/app/.tokenkeycache
 
 # application
 COPY ./bin/Debug/net5.0/linux-arm/publish .

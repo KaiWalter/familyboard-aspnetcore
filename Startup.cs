@@ -30,12 +30,11 @@ namespace FamilyBoard
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var tokenCache = System.Environment.GetEnvironmentVariable("TOKENCACHE") ?? "./.tokencache";
-            var tokenPath = Path.GetDirectoryName(tokenCache);
+            var tokenKeyCachePath = System.Environment.GetEnvironmentVariable("TOKENKEYCACHEPATH") ?? ".";
 
             services.AddDataProtection()
                     // This helps surviving a restart: a same app will find back its keys. Just ensure to create the folder.
-                    .PersistKeysToFileSystem(new DirectoryInfo(tokenPath))
+                    .PersistKeysToFileSystem(new DirectoryInfo(tokenKeyCachePath))
                     // This helps surviving a site update: each app has its own store, building the site creates a new app
                     .SetApplicationName("FamilyBoard")
                     .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
@@ -55,7 +54,7 @@ namespace FamilyBoard
 
             services.AddDiskCache(options =>
             {
-                options.CachePath = tokenCache;
+                options.CachePath = Path.Combine(tokenKeyCachePath, "accessTokens.json");
             });
 
             services.AddControllersWithViews(options =>
