@@ -1,4 +1,5 @@
 using System;
+using IntegratedCacheUtils.Stores;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ namespace FamilyBoard.Core.Cache
             configureAction(options);
 
             services.AddSingleton(Options.Create(options));
-            services.AddSingleton<IDistributedCache, DiskCacheHandler>();
+            services.AddScoped<IMsalAccountActivityStore, FileSystemMsalAccountActivityStore>();
             return services;
         }
     }

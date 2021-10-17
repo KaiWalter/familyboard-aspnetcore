@@ -17,19 +17,15 @@ namespace FamilyBoard.Application.Controllers
     {
         private readonly ILogger<ImageController> _logger;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
         private readonly IConfiguration _configuration;
 
         private readonly IImageService _imageService;
 
         public ImageController(ILogger<ImageController> logger,
                             IConfiguration configuration,
-                            GraphServiceClient graphServiceClient,
                             IImageService imageService)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;
             _configuration = configuration;
             _imageService = imageService;
         }

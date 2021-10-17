@@ -18,19 +18,15 @@ namespace FamilyBoard.Application.Controllers
     {
         private readonly ILogger<CalendarController> _logger;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
         private readonly IConfiguration _configuration;
 
         private readonly IEnumerable<ICalendarService> _calendarServices;
 
         public CalendarController(ILogger<CalendarController> logger,
                             IConfiguration configuration,
-                            GraphServiceClient graphServiceClient,
                             IEnumerable<ICalendarService> calendarServices)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;
             _configuration = configuration;
             _calendarServices = calendarServices;
         }

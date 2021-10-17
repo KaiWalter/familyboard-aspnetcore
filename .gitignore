@@ -454,5 +454,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 # FamilyBoard specific
-.tokencache
-key*
+FileSystemMsalAccountActivityStore.json
