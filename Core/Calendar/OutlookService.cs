@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Graph.Extensions;
+using Microsoft.Identity.Client;
+using Microsoft.Identity.Web.TokenCacheProviders;
+using IntegratedCacheUtils.Stores;
 
 namespace FamilyBoard.Core.Calendar
 {
@@ -13,16 +16,19 @@ namespace FamilyBoard.Core.Calendar
     {
         private readonly ILogger<OutlookService> _logger;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
+        private readonly IMsalAccountActivityStore _msalAccountActivityStore;
+        private readonly IMsalTokenCacheProvider _msalTokenCacheProvider;
         private readonly IConfiguration _configuration;
+
         public OutlookService(ILogger<OutlookService> logger,
                             IConfiguration configuration,
-                            GraphServiceClient graphServiceClient)
+                            IMsalAccountActivityStore msalAccountActivityStore,
+                            IMsalTokenCacheProvider msalTokenCacheProvider)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;
             _configuration = configuration;
+            _msalAccountActivityStore = msalAccountActivityStore;
+            _msalTokenCacheProvider = msalTokenCacheProvider;
         }
 
         public bool IsHolidays => throw new NotImplementedException();
@@ -31,15 +37,18 @@ namespace FamilyBoard.Core.Calendar
 
         public async Task<List<CalendarEntry>> GetEvents(DateTime startDate, DateTime endDate, bool isPrimary = false, bool isSecondary = false)
         {
+            string[] scopes = _configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
+            var graphServiceClient = GetGraphServiceClient(scopes);
+
             var result = new List<CalendarEntry>();
 
             var calendarNames = _configuration.GetSection("Calendar:CalendarNames").Get<string[]>();
-            var filterClause = string.Join(" or ",calendarNames.Select(cn => "name eq '" + cn + "'"));
+            var filterClause = string.Join(" or ", calendarNames.Select(cn => "name eq '" + cn + "'"));
 
             var primaryCalendar = _configuration["Calendar:Primary"] ?? "Calendar";
             var timeZone = _configuration["Calendar:TimeZone"] ?? "UTC";
 
-            var calendars = await _graphServiceClient.Me.Calendars
+            var calendars = await graphServiceClient.Me.Calendars
                 .Request()
                 .Filter(filterClause)
                 .GetAsync();
@@ -52,20 +61,20 @@ namespace FamilyBoard.Core.Calendar
 
             foreach (var calendar in calendars)
             {
-                var calendarView = await _graphServiceClient.Me.Calendars[calendar.Id]
+                var calendarView = await graphServiceClient.Me.Calendars[calendar.Id]
                     .CalendarView
                     .Request(calendarQueryOptions)
                     .Header("Prefer", $"outlook.timezone=\"{timeZone}\"")
                     .GetAsync();
 
                 var pageIterator = PageIterator<Event>.CreatePageIterator(
-                    _graphServiceClient, calendarView,
+                    graphServiceClient, calendarView,
                     (e) =>
                     {
-                        if((bool)e.IsAllDay)
+                        if ((bool)e.IsAllDay)
                         {
                             var currentDay = e.Start.ToDateTime();
-                            while(currentDay.CompareTo(e.End.ToDateTime()) < 0)
+                            while (currentDay.CompareTo(e.End.ToDateTime()) < 0)
                             {
                                 result.Add(new CalendarEntry()
                                 {
@@ -105,6 +114,40 @@ namespace FamilyBoard.Core.Calendar
             }
 
             return result;
+        }
+
+        private GraphServiceClient GetGraphServiceClient(string[] scopes)
+        {
+            return GraphServiceClientFactory.GetAuthenticatedGraphClient(async () =>
+            {
+                IConfidentialClientApplication app = GetConfidentialClientApplication();
+                var account = await _msalAccountActivityStore.GetMsalAccountLastActivity();
+                var token = await app.AcquireTokenSilent(scopes, new MsalAccount
+                    {
+                        HomeAccountId = new AccountId(
+                                            account.AccountIdentifier,
+                                            account.AccountObjectId,
+                                            account.AccountTenantId)
+                    })
+                    .ExecuteAsync()
+                    .ConfigureAwait(false);
+
+                return token.AccessToken;
+            }, _configuration.GetValue<string>("Graph:BaseUrl"));
+        }
+
+        private IConfidentialClientApplication GetConfidentialClientApplication()
+        {
+            var config = new AuthenticationConfig();
+            _configuration.GetSection("AzureAd").Bind(config);
+            var app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
+                .WithClientSecret(config.ClientSecret)
+                .WithAuthority(new Uri(config.Authority))
+                .Build();
+
+            _msalTokenCacheProvider.Initialize(app.UserTokenCache);
+
+            return app;
         }
     }
 }

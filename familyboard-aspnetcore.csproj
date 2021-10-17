@@ -10,13 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="ms-identity-dotnet-advanced-token-cache-master/**" />
-    <Compile Remove="ms-identity-dotnet-advanced-token-cache-master/**" />
-    <EmbeddedResource Remove="ms-identity-dotnet-advanced-token-cache-master/**" />
-    <None Remove="ms-identity-dotnet-advanced-token-cache-master/**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.Graph" Version="4.7.0" />
     <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="1.18.0" />

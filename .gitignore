@@ -455,3 +455,5 @@ $RECYCLE.BIN/
 
 # FamilyBoard specific
 FileSystemMsalAccountActivityStore.json
+accessTokens.json
+key*

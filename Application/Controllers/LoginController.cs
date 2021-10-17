@@ -18,9 +18,7 @@ namespace FamilyBoard.Application.Controllers
 
         private readonly ITokenAcquisition _tokenAcquisition;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
-        private string[] _graphScopes = new[] { "user.read" };
+        private string[] _graphScopes = new[] { "offline_access", "User.Read", "Calendars.Read", "Files.Read.All" };
 
         public LoginController(ILogger<LoginController> logger,
                             ITokenAcquisition tokenAcquisition,
@@ -30,7 +28,7 @@ namespace FamilyBoard.Application.Controllers
             _tokenAcquisition = tokenAcquisition;
         }
 
-        [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
+        [AuthorizeForScopes(ScopeKeySection = "Graph:Scopes")]
         public async Task<IActionResult> Index()
         {
             _logger.LogTrace("LOGIN REQUEST:" + nameof(Index));

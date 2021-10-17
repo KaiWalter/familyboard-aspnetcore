@@ -3,32 +3,41 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using IntegratedCacheUtils.Stores;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
+using Microsoft.Identity.Client;
+using Microsoft.Identity.Web.TokenCacheProviders;
 
 namespace FamilyBoard.Core.Image
 {
     public class OnedriveService : IImageService
     {
         private readonly ILogger<OnedriveService> _logger;
-
-        private readonly GraphServiceClient _graphServiceClient;
-
+        private readonly IMsalAccountActivityStore _msalAccountActivityStore;
+        private readonly IMsalTokenCacheProvider _msalTokenCacheProvider;
         private readonly IConfiguration _configuration;
+
         public OnedriveService(ILogger<OnedriveService> logger,
                             IConfiguration configuration,
-                            GraphServiceClient graphServiceClient)
+                            IMsalAccountActivityStore msalAccountActivityStore,
+                            IMsalTokenCacheProvider msalTokenCacheProvider)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;
             _configuration = configuration;
+            _msalAccountActivityStore = msalAccountActivityStore;
+            _msalTokenCacheProvider = msalTokenCacheProvider;
         }
+
         public async Task<ImageResponse> GetNextImage()
         {
+            string[] scopes = _configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
+            var graphServiceClient = GetGraphServiceClient(scopes);
+
             string folderName = _configuration["Images:FolderName"] ?? "Pictures";
 
-            var images = await _graphServiceClient
+            var images = await graphServiceClient
                         .Me
                         .Drive
                         .Root
@@ -67,6 +76,40 @@ namespace FamilyBoard.Core.Image
             }
 
             return result;
+        }
+
+        private GraphServiceClient GetGraphServiceClient(string[] scopes)
+        {
+            return GraphServiceClientFactory.GetAuthenticatedGraphClient(async () =>
+            {
+                IConfidentialClientApplication app = GetConfidentialClientApplication();
+                var account = await _msalAccountActivityStore.GetMsalAccountLastActivity();
+                var token = await app.AcquireTokenSilent(scopes, new MsalAccount
+                {
+                    HomeAccountId = new AccountId(
+                                            account.AccountIdentifier,
+                                            account.AccountObjectId,
+                                            account.AccountTenantId)
+                })
+                    .ExecuteAsync()
+                    .ConfigureAwait(false);
+
+                return token.AccessToken;
+            }, _configuration.GetValue<string>("Graph:BaseUrl"));
+        }
+
+        private IConfidentialClientApplication GetConfidentialClientApplication()
+        {
+            var config = new AuthenticationConfig();
+            _configuration.GetSection("AzureAd").Bind(config);
+            var app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
+                .WithClientSecret(config.ClientSecret)
+                .WithAuthority(new Uri(config.Authority))
+                .Build();
+
+            _msalTokenCacheProvider.Initialize(app.UserTokenCache);
+
+            return app;
         }
     }
 }

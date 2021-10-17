@@ -15,6 +15,8 @@ namespace IntegratedCacheUtils.Stores
 
         Task<MsalAccountActivity> GetMsalAccountActivityForUser(string userPrincipalName);
 
+        Task<MsalAccountActivity> GetMsalAccountLastActivity();
+
         Task HandleIntegratedTokenAcquisitionFailure(MsalAccountActivity failedAccountActivity);
     }
 }

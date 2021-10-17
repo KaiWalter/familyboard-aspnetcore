@@ -4,6 +4,7 @@ namespace FamilyBoard.Core.Cache
 {
     public class DiskCacheOptions : IOptions<DiskCacheOptions>
     {
+        public string ActivitiesPath { get; set; }
         public string CachePath { get; set; }
 
         /// <inheritdoc cref="IOptions{TOptions}.Value"/>

@@ -17,6 +17,8 @@ using IntegratedCacheUtils;
 using IntegratedCacheUtils.Stores;
 using FamilyBoard.Core.Cache;
 using System.IO;
+using Microsoft.AspNetCore.DataProtection;
+using System;
 
 namespace FamilyBoard
 {
@@ -33,9 +35,17 @@ namespace FamilyBoard
         {
             var tokenKeyCachePath = System.Environment.GetEnvironmentVariable("TOKENKEYCACHEPATH") ?? ".";
 
+            services.AddDataProtection()
+                    // This helps surviving a restart: a same app will find back its keys. Just ensure to create the folder.
+                    .PersistKeysToFileSystem(new DirectoryInfo(tokenKeyCachePath))
+                    // This helps surviving a site update: each app has its own store, building the site creates a new app
+                    .SetApplicationName("FamilyBoard")
+                    .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+
             services.AddDiskCache(options =>
             {
-                options.CachePath = Path.Combine(tokenKeyCachePath, "FileSystemMsalAccountActivityStore.json");
+                options.ActivitiesPath = Path.Combine(tokenKeyCachePath, "FileSystemMsalAccountActivityStore.json");
+                options.CachePath = Path.Combine(tokenKeyCachePath, "accessTokens.json");
             });
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -47,14 +57,16 @@ namespace FamilyBoard
                 options.HandleSameSiteCookieCompatibility();
             });
 
+            string[] initialScopes = Configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
+
             // Sign-in users with the Microsoft identity platform
             // Configures the web app to call a web api (Ms Graph)
             // Sets the IMsalTokenCacheProvider to be the IntegratedTokenCacheAdapter
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration, "AzureAd", subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: true)
-                .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddMicrosoftGraph(Configuration.GetSection("DownstreamApi"))
-                .AddIntegratedUserTokenCache();
+                .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+                .AddMicrosoftGraph(Configuration.GetSection("Graph"))
+                .AddDistributedTokenCaches();
 
             services.AddControllersWithViews(options =>
                 {
@@ -101,6 +113,7 @@ namespace FamilyBoard
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
             app.UseCookiePolicy();
             app.UseRouting();
 
