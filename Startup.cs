@@ -66,7 +66,7 @@ namespace FamilyBoard
                 .AddMicrosoftIdentityWebApp(Configuration, "AzureAd", subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: true)
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
                 .AddMicrosoftGraph(Configuration.GetSection("Graph"))
-                .AddDistributedTokenCaches();
+                .AddIntegratedUserTokenCache();
 
             services.AddControllersWithViews(options =>
                 {

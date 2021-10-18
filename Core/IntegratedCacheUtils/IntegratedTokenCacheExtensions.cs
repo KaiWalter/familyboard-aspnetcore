@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.TokenCacheProviders;
+using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
 using System;
 
 namespace IntegratedCacheUtils
@@ -19,7 +20,7 @@ namespace IntegratedCacheUtils
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddDistributedMemoryCache();
+            services.AddDistributedTokenCaches();
             services.AddHttpContextAccessor();
             services.AddSingleton<IMsalTokenCacheProvider, IntegratedTokenCacheAdapter>();
             return services;
