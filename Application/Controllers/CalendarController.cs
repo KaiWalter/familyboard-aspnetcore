@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Graph;
-using Microsoft.Identity.Web;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FamilyBoard.Core.Calendar;
 using FamilyBoard.Application.Models;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FamilyBoard.Application.Controllers
 {
@@ -18,25 +17,21 @@ namespace FamilyBoard.Application.Controllers
     {
         private readonly ILogger<CalendarController> _logger;
 
-        private readonly GraphServiceClient _graphServiceClient;
-
         private readonly IConfiguration _configuration;
 
         private readonly IEnumerable<ICalendarService> _calendarServices;
 
         public CalendarController(ILogger<CalendarController> logger,
                             IConfiguration configuration,
-                            GraphServiceClient graphServiceClient,
                             IEnumerable<ICalendarService> calendarServices)
         {
             _logger = logger;
-            _graphServiceClient = graphServiceClient;
             _configuration = configuration;
             _calendarServices = calendarServices;
         }
 
         [HttpGet]
-        [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<CalendarEntry>>> GetCalendarEntries()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetCalendarEntries));
@@ -56,6 +51,7 @@ namespace FamilyBoard.Application.Controllers
         }
 
         [HttpGet("dateformatinfo")]
+        [AllowAnonymous]
         public ActionResult<DateFormatInfo> GetDateFormatInfo()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetDateFormatInfo));
