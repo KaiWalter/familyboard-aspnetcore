@@ -1,5 +1,5 @@
 using System;
-using IntegratedCacheUtils.Stores;
+using FamilyBoard.Core.Cache.Stores;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

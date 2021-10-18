@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace IntegratedCacheUtils.Entities
+namespace FamilyBoard.Core.Cache.Entities
 {
     // This entity represents the user IAccount that MSAL used to acquire an access token, with additional properties to help the background worker
     // to link a cached token with its correspondent user.

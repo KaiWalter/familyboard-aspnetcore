@@ -1,9 +1,9 @@
-﻿using IntegratedCacheUtils.Entities;
+﻿using FamilyBoard.Core.Cache.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace IntegratedCacheUtils.Stores
+namespace FamilyBoard.Core.Cache.Stores
 {
     // Interface for basics operations of MsalAccountActivity.
     // Implement this interface with your own logic on where to persist the entity, how to handle failures and etc

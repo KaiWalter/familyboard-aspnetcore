@@ -1,5 +1,5 @@
 ﻿using FamilyBoard.Core.Cache;
-using IntegratedCacheUtils.Entities;
+using FamilyBoard.Core.Cache.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace IntegratedCacheUtils.Stores
+namespace FamilyBoard.Core.Cache.Stores
 {
     public class FileSystemMsalAccountActivityStore : IMsalAccountActivityStore
     {

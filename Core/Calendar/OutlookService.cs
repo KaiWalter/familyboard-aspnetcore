@@ -6,29 +6,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Graph.Extensions;
-using Microsoft.Identity.Client;
-using Microsoft.Identity.Web.TokenCacheProviders;
-using IntegratedCacheUtils.Stores;
+using FamilyBoard.Core.Graph;
 
 namespace FamilyBoard.Core.Calendar
 {
     public class OutlookService : ICalendarService
     {
         private readonly ILogger<OutlookService> _logger;
-
-        private readonly IMsalAccountActivityStore _msalAccountActivityStore;
-        private readonly IMsalTokenCacheProvider _msalTokenCacheProvider;
+        private readonly IGraphService _graphService;
         private readonly IConfiguration _configuration;
 
         public OutlookService(ILogger<OutlookService> logger,
                             IConfiguration configuration,
-                            IMsalAccountActivityStore msalAccountActivityStore,
-                            IMsalTokenCacheProvider msalTokenCacheProvider)
+                            IGraphService graphService)
         {
             _logger = logger;
             _configuration = configuration;
-            _msalAccountActivityStore = msalAccountActivityStore;
-            _msalTokenCacheProvider = msalTokenCacheProvider;
+            _graphService = graphService;
         }
 
         public bool IsHolidays => throw new NotImplementedException();
@@ -37,8 +31,7 @@ namespace FamilyBoard.Core.Calendar
 
         public async Task<List<CalendarEntry>> GetEvents(DateTime startDate, DateTime endDate, bool isPrimary = false, bool isSecondary = false)
         {
-            string[] scopes = _configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
-            var graphServiceClient = GetGraphServiceClient(scopes);
+            var graphServiceClient = _graphService.GetGraphServiceClient();
 
             var result = new List<CalendarEntry>();
 
@@ -116,38 +109,5 @@ namespace FamilyBoard.Core.Calendar
             return result;
         }
 
-        private GraphServiceClient GetGraphServiceClient(string[] scopes)
-        {
-            return GraphServiceClientFactory.GetAuthenticatedGraphClient(async () =>
-            {
-                IConfidentialClientApplication app = GetConfidentialClientApplication();
-                var account = await _msalAccountActivityStore.GetMsalAccountLastActivity();
-                var token = await app.AcquireTokenSilent(scopes, new MsalAccount
-                    {
-                        HomeAccountId = new AccountId(
-                                            account.AccountIdentifier,
-                                            account.AccountObjectId,
-                                            account.AccountTenantId)
-                    })
-                    .ExecuteAsync()
-                    .ConfigureAwait(false);
-
-                return token.AccessToken;
-            }, _configuration.GetValue<string>("Graph:BaseUrl"));
-        }
-
-        private IConfidentialClientApplication GetConfidentialClientApplication()
-        {
-            var config = new AuthenticationConfig();
-            _configuration.GetSection("AzureAd").Bind(config);
-            var app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
-                .WithClientSecret(config.ClientSecret)
-                .WithAuthority(new Uri(config.Authority))
-                .Build();
-
-            _msalTokenCacheProvider.Initialize(app.UserTokenCache);
-
-            return app;
-        }
     }
 }

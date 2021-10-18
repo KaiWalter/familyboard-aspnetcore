@@ -1,6 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 
-namespace FamilyBoard.Core
+namespace FamilyBoard.Core.Graph
 {
     // Msal expects an object of IAccount in the method AcquireTokenSilent.
     // This class implements the IAccount interface and will be instantiated with the values that came from MsalAccountActivity entity, and

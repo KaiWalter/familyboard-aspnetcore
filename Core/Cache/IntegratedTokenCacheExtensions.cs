@@ -5,7 +5,7 @@ using Microsoft.Identity.Web.TokenCacheProviders;
 using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
 using System;
 
-namespace IntegratedCacheUtils
+namespace FamilyBoard.Core.Cache
 {
     public static class IntegratedTokenCacheExtensions
     {

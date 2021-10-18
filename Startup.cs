@@ -1,4 +1,12 @@
+using FamilyBoard.Application.Utils;
+using FamilyBoard.Core.Cache;
+using FamilyBoard.Core.Calendar;
+using FamilyBoard.Core.Graph;
+using FamilyBoard.Core.Image;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -6,19 +14,10 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FamilyBoard.Application.Utils;
-using FamilyBoard.Core.Calendar;
-using FamilyBoard.Core.Image;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using IntegratedCacheUtils;
-using IntegratedCacheUtils.Stores;
-using FamilyBoard.Core.Cache;
-using System.IO;
-using Microsoft.AspNetCore.DataProtection;
 using System;
+using System.IO;
 
 namespace FamilyBoard
 {
@@ -44,7 +43,7 @@ namespace FamilyBoard
 
             services.AddDiskCache(options =>
             {
-                options.ActivitiesPath = Path.Combine(tokenKeyCachePath, "FileSystemMsalAccountActivityStore.json");
+                options.ActivitiesPath = Path.Combine(tokenKeyCachePath, "msalAccountActivityStore.json");
                 options.CachePath = Path.Combine(tokenKeyCachePath, "accessTokens.json");
             });
 
@@ -88,6 +87,9 @@ namespace FamilyBoard
                     options.ViewLocationFormats.Add("/Application/Views/{1}/{0}" + RazorViewEngine.ViewExtension);
                     options.ViewLocationFormats.Add("/Application/Views/Shared/{0}" + RazorViewEngine.ViewExtension);
                 });
+
+
+            services.AddTransient<IGraphService, GraphService>();
 
             // Add all calendar services - sequence listed here reflects sequence calendar types are displayed on calendar within a day
             services.AddTransient<ICalendarService, SchoolHolidaysService>();

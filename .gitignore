@@ -454,6 +454,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 # FamilyBoard specific
-FileSystemMsalAccountActivityStore.json
+msalAccountActivityStore.json
 accessTokens.json
 key*

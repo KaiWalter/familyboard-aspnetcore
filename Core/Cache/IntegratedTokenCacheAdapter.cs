@@ -1,5 +1,5 @@
-﻿using IntegratedCacheUtils.Entities;
-using IntegratedCacheUtils.Stores;
+﻿using FamilyBoard.Core.Cache.Entities;
+using FamilyBoard.Core.Cache.Stores;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ using Microsoft.Identity.Client;
 using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
 using System.Threading.Tasks;
 
-namespace IntegratedCacheUtils
+namespace FamilyBoard.Core.Cache
 {
     // An extension of MsalDistributedTokenCacheAdapter, that will upsert the entity MsalAccountActivity
     // before MSAL writes an entry in the token cache

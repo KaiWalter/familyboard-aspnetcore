@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Globalization;
-using System.IO;
-
-namespace FamilyBoard.Core
+﻿namespace FamilyBoard.Core.Graph
 {
     // Class to read the keys from appsettings.json
     public class AuthenticationConfig

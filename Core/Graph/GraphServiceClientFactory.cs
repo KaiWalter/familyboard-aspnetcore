@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace FamilyBoard.Core
+namespace FamilyBoard.Core.Graph
 {
     // Factory to instantiate the GraphServiceClient to be used to call Graph
     public class GraphServiceClientFactory
