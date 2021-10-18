@@ -6,7 +6,7 @@ This implementation of a family board - displaying a random images selected from
 
 ## What I want to achieve / to learn
 
-[ ] use the **Microsoft Graph .NET SDK** but with an almost **headless approach** - when the board is logged in once the access token is persited so that even when the machine hosting the board is rebooted the authentication would still work
+[x] use the **Microsoft Graph .NET SDK** but with an almost **headless approach** - when the board is logged in once the access token is persisted so that even when the machine hosting the board is rebooted the authentication would still work
 [x] get started with **GitHub Actions**
 [x] host **ASP.NET Core** in **Docker** on a **Raspberry Pi 3B**
 
@@ -18,7 +18,7 @@ Inspired by [a post from Scott Hanselman](https://www.hanselman.com/blog/how-to-
 - [Python with jyserver - push updates to browser](https://github.com/KaiWalter/family-board-jyserver)
 - [Azure Functions with SignalR - push updates to browser](https://github.com/KaiWalter/family-board-lambda-signalr); hosted in the cloud
 
-Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.net/) on it which led me to shift the backend workload from cloud back into my network and thus help keeping things more isolated:
+Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.net/) on it which led me to shift the backend workload from cloud back end into my network and thus help keeping things more isolated:
 
 ```text
 +------------------------+     +------------------------+
@@ -29,6 +29,21 @@ Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.n
 |                        |     |                        |
 +------------------------+     +------------------------+
 ```
+
+## preserving access tokens
+
+Goal is to achieve a **headless approach** - when the board is logged in once from anywhere in my local network, the access token is persisted, so that
+
+- the kiosk / browser can open the board without the need for a new login - avoiding to plug-in a keyboard
+- even when the server (=machine hosting the board) is rebooted, the authentication would still work
+
+For that I adapted the background worker approach with an implementation of `MsalDistributedTokenCacheAdapter` from this [advanced token cache sample](https://github.com/Azure-Samples/ms-identity-dotnet-advanced-token-cache). Instead of storing the account activity on SQL Server it is stored on a folder in the filesystem which is volume mapped from the Docker container to the servers filesystem.
+
+The same applies for the token cache itself. An implementation `IDistributedCache` stores the access token also on the volume mapped filesystem.
+
+> I am aware that this adaptation currently is not clean cut and a bit hacky. I wanted to use it as a learning exercise and will try to understand what is really going on over time to boil it down to the required essence.
+
+----
 
 ## hints
 
@@ -51,4 +66,5 @@ git update-index --no-assume-unchanged appsettings.Development.json
 ## documentation backlog
 
 [ ] app registrations: <https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
+
 [ ] certificate approach
