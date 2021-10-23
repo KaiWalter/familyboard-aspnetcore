@@ -34,7 +34,7 @@ Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.n
 
 > replace `homeserver.my.net` with server's hostname / FQDN on your network
 
-- https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+- go to <https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
 - select `Applications from personal account`
 - new registration
 - click `Only associate with personal account`
@@ -135,6 +135,13 @@ using the **http** (not https) to avoid certificate warning popping up.
 ----
 
 ## concepts
+
+### Why HTTPS?
+
+**App registration** does not allow URLs with `http://` other than `http://localhost...` e.g. `http://homeserver.my.net:5000/` so when wanting to login to the application from another machine, even from the same local network, **Https** is required.
+
+![Error message when trying a Http URL](./images/screenshot-aad-app-http.png)
+
 
 ### preserving access tokens
 
