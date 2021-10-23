@@ -16,6 +16,7 @@ namespace FamilyBoard.Core.Cache
             services.AddSingleton(Options.Create(options));
             services.AddScoped<IMsalAccountActivityStore, FileSystemMsalAccountActivityStore>();
             services.AddSingleton<IDistributedCache, DiskCacheHandler>();
+            
             return services;
         }
     }

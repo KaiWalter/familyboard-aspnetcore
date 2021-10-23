@@ -19,9 +19,9 @@ namespace FamilyBoard.Core.Cache
 
         public IntegratedTokenCacheAdapter(
             IServiceScopeFactory scopeFactory,
-            IDistributedCache memoryCache,
+            IDistributedCache distributedCache,
             IOptions<MsalDistributedTokenCacheAdapterOptions> cacheOptions,
-            ILogger<MsalDistributedTokenCacheAdapter> logger) : base(memoryCache, cacheOptions, logger)
+            ILogger<MsalDistributedTokenCacheAdapter> logger) : base(distributedCache, cacheOptions, logger)
         {
             this._scopeFactory = scopeFactory;
             this._logger = logger;

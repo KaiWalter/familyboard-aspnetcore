@@ -15,14 +15,10 @@ namespace FamilyBoard.Core.Cache
         public static IServiceCollection AddIntegratedUserTokenCache(
             this IServiceCollection services)
         {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
+            _ = services ?? throw new ArgumentNullException(nameof(services));
 
-            services.AddDistributedTokenCaches();
-            services.AddHttpContextAccessor();
             services.AddSingleton<IMsalTokenCacheProvider, IntegratedTokenCacheAdapter>();
+
             return services;
         }
 
@@ -32,12 +28,10 @@ namespace FamilyBoard.Core.Cache
         public static MicrosoftIdentityAppCallsWebApiAuthenticationBuilder AddIntegratedUserTokenCache(
             this MicrosoftIdentityAppCallsWebApiAuthenticationBuilder builder)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
             builder.Services.AddIntegratedUserTokenCache();
+
             return builder;
         }
     }
