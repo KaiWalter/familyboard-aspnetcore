@@ -30,7 +30,113 @@ Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.n
 +------------------------+     +------------------------+
 ```
 
-## preserving access tokens
+### configure Microsoft Graph / Outlook / Live calendar access
+
+> replace `homeserver.my.net` with server's hostname / FQDN on your network
+
+- https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+- select `Applications from personal account`
+- new registration
+- click `Only associate with personal account`
+- enter name
+- select `Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)`
+- enter redirect URL - e.g. for local development & testing: https://localhost:5001/signin-oidc
+- on **Authentication** : add redirect URL for later production use: https://homeserver.my.net:5001/signin-oidc (or create a separate app registration)
+- on **API permissions** : add `Microsoft.Graph / delegated`
+  - Calendars.Read
+  - Files.Read.All
+- on **Certificates & secrets** : add `New client secret` (keep the secret for the next step)
+- on **your server** create a `appSettings.json`
+
+```json
+{
+    "Calendar": {
+        "CalendarNames": [
+            "Calendar"
+        ],
+        "Primary": "Calendar",
+        "TimeZone": "Europe/Berlin",
+        "Culture": "de-DE"
+    },
+    "Images": {
+        "FolderName": "FamilyCalendarImages"
+    },
+    "AzureAd": {
+        "TenantId": "common",
+        "ClientId": "{client-id-from-app-registration-created-above}",
+        "ClientSecret": "{client-secret-from-app-registration-created-above}",
+        "CallbackPath": "/signin-oidc",
+        "SignedOutCallbackPath ": "/signout-callback-oidc"
+    },
+    "Graph": {
+        "BaseUrl": "https://graph.microsoft.com/v1.0",
+        "Scopes": "Calendars.Read Files.Read.All"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+        }
+    },
+    "AllowedHosts": "*"
+}
+```
+
+#### important settings
+
+| appSettings path | purpose |
+| ---- | ---- |
+| Calendar:CalendarNames | an array of Outlook calendar names to be queried and rendered on the board |
+| Calendar:Primary | of these calendars above, which is the primary for a different coloring |
+| Calendar:TimeZone | time zone to query and render calendar times |
+| Calendar:Culture | culture to render month and weekday names |
+| Images:FolderName | folder name to pick images to render from |
+
+### install Docker container for FamilyBoard
+
+GitHub action `.github/workflows/dotnet.yml` builds the container images and pushes it to a container registry.
+
+To start the container on **server**:
+
+Create a file `.familyboard.appSettings.json` with settings and credentials - see above.
+
+```shell
+mkdir /home/pi/.tokenkeycache
+export DOCKER_PASSWORD={password-to-container-registry}
+export DOCKER_USERNAME={user-for-container-registry}
+export DOCKER_REGISTRY={container-registry-url}
+echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
+docker pull ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/familyboard-aspnetcore:latest
+docker run -d \
+    --name familyboard \
+    -p 5001:5001 \
+    -p 5000:5000 \
+    --mount type=bind,source=/home/pi/.familyboard.appSettings.json,target=/app/appsettings.Production.json \
+    --mount type=bind,source=/home/pi/.tokenkeycache/,target=/app/.tokenkeycache/ \
+    --restart always \
+    ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/familyboard-aspnetcore
+```
+
+### initializing access token
+
+> replace `homeserver.my.net` with server's hostname / FQDN on your network
+
+From anywhere in the home network login on <https://homeserver.my.net:5001/login> with personal account - skip certificate warnings.
+
+On the kiosk / browser Pi, on autostart start the board with
+
+```shell
+chromium-browser --noerrdialogs --check-for-update-interval=1 --simulate-critical-update --incognito --disable-infobars --kiosk --start-fullscreen http://homeserver.my.net:5000/
+```
+
+using the **http** (not https) to avoid certificate warning popping up.
+
+----
+
+## concepts
+
+### preserving access tokens
 
 Goal is to achieve a **headless approach** - when the board is logged in once from anywhere in my local network, the access token is persisted, so that
 
@@ -65,6 +171,6 @@ git update-index --no-assume-unchanged appsettings.Development.json
 
 ## documentation backlog
 
-[ ] app registrations: <https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
+[x] app registrations: <https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
 
 [ ] certificate approach
