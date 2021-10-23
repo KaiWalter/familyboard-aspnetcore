@@ -31,6 +31,7 @@ namespace FamilyBoard.Core.Cache
 
         public async Task<byte[]> GetAsync(string key, CancellationToken token)
         {
+            await Task.Delay(0);
             if (_cache.ContainsKey(key))
             {
                 return _cache[key];
@@ -46,6 +47,7 @@ namespace FamilyBoard.Core.Cache
         public async Task RefreshAsync(string key, CancellationToken token = default)
         {
             // do nothing - cache items to not expire
+            await Task.Delay(0);
         }
 
         public void Remove(string key)

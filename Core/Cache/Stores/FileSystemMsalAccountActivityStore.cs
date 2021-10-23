@@ -52,6 +52,7 @@ namespace FamilyBoard.Core.Cache.Stores
         // Retrieve MsalAccountActivites that happened before a certain time ago
         public async Task<IEnumerable<MsalAccountActivity>> GetMsalAccountActivitesSince(DateTime lastActivityDate)
         {
+            await Task.Delay(0);
             return _cache
                     .Where(x => x.FailedToAcquireToken == false
                         && x.LastActivity <= lastActivityDate);
@@ -60,6 +61,7 @@ namespace FamilyBoard.Core.Cache.Stores
         // Retireve a specific user MsalAccountActivity
         public async Task<MsalAccountActivity> GetMsalAccountActivityForUser(string userPrincipalName)
         {
+            await Task.Delay(0);
             return _cache
                     .Where(x => x.FailedToAcquireToken == false
                         && x.UserPrincipalName == userPrincipalName)
@@ -68,6 +70,7 @@ namespace FamilyBoard.Core.Cache.Stores
 
         public async Task<MsalAccountActivity> GetMsalAccountLastActivity()
         {
+            await Task.Delay(0);
             return _cache
                     .Where(x => x.FailedToAcquireToken == false)
                     .OrderByDescending(x => x.LastActivity)
@@ -79,6 +82,7 @@ namespace FamilyBoard.Core.Cache.Stores
         // Setting the flag FailedToAcquireToken to true
         public async Task HandleIntegratedTokenAcquisitionFailure(MsalAccountActivity failedAccountActivity)
         {
+            await Task.Delay(0);
             failedAccountActivity.FailedToAcquireToken = true;
             foreach (var accountActivity in _cache.Where(x => x.AccountCacheKey == failedAccountActivity.AccountCacheKey))
             {
@@ -95,6 +99,7 @@ namespace FamilyBoard.Core.Cache.Stores
         // Insert a new MsalAccountActivity case it doesnt exist, otherwise update the existing entry
         public async Task UpsertMsalAccountActivity(MsalAccountActivity msalAccountActivity)
         {
+            await Task.Delay(0);
             if (_cache.Count(x => x.AccountCacheKey == msalAccountActivity.AccountCacheKey) != 0)
                 foreach (var accountActivity in _cache.Where(x => x.AccountCacheKey == msalAccountActivity.AccountCacheKey))
                 {
