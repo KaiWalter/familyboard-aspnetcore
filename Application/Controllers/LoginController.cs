@@ -5,6 +5,8 @@ using Microsoft.Identity.Web;
 using System.Diagnostics;
 using FamilyBoard.Application.Models;
 
+using Constants = FamilyBoard.Core.Constants;
+
 namespace FamilyBoard.Application.Controllers
 {
     [Authorize]
@@ -17,7 +19,7 @@ namespace FamilyBoard.Application.Controllers
             _logger = logger;
         }
 
-        [AuthorizeForScopes(ScopeKeySection = "Graph:Scopes")]
+        [AuthorizeForScopes(ScopeKeySection = Constants.GraphScope)]
         public IActionResult Index()
         {
             _logger.LogTrace("LOGIN");

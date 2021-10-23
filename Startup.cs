@@ -19,6 +19,8 @@ using Microsoft.Identity.Web.UI;
 using System;
 using System.IO;
 
+using Constants = FamilyBoard.Core.Constants;
+
 namespace FamilyBoard
 {
     public class Startup
@@ -56,15 +58,15 @@ namespace FamilyBoard
                 options.HandleSameSiteCookieCompatibility();
             });
 
-            string[] initialScopes = Configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
+            string[] initialScopes = Configuration.GetValue<string>(Constants.GraphScope)?.Split(' ');
 
             // Sign-in users with the Microsoft identity platform
             // Configures the web app to call a web api (Ms Graph)
             // Sets the IMsalTokenCacheProvider to be the IntegratedTokenCacheAdapter
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(Configuration, "AzureAd", subscribeToOpenIdConnectMiddlewareDiagnosticsEvents: true)
+                .AddMicrosoftIdentityWebApp(Configuration, Constants.AzureAdConfigSectionName)
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-                .AddMicrosoftGraph(Configuration.GetSection("Graph"))
+                .AddMicrosoftGraph(Configuration.GetSection(Constants.GraphConfigSectionName))
                 .AddIntegratedUserTokenCache();
 
             services.AddControllersWithViews(options =>

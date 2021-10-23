@@ -30,7 +30,7 @@ namespace FamilyBoard.Core.Graph
         {
             return GraphServiceClientFactory.GetAuthenticatedGraphClient(async () =>
             {
-                string[] scopes = _configuration.GetValue<string>("Graph:Scopes")?.Split(' ');
+                string[] scopes = _configuration.GetValue<string>(Constants.GraphScope)?.Split(' ');
                 IConfidentialClientApplication app = GetConfidentialClientApplication();
                 var account = await _msalAccountActivityStore.GetMsalAccountLastActivity();
                 var token = await app.AcquireTokenSilent(scopes, new MsalAccount
@@ -50,7 +50,7 @@ namespace FamilyBoard.Core.Graph
         private IConfidentialClientApplication GetConfidentialClientApplication()
         {
             var config = new AuthenticationConfig();
-            _configuration.GetSection("AzureAd").Bind(config);
+            _configuration.GetSection(Constants.AzureAdConfigSectionName).Bind(config);
             var app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
                                                           .WithClientSecret(config.ClientSecret)
                                                           .WithAuthority(new Uri(config.Authority))
