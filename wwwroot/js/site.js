@@ -194,7 +194,7 @@ function renderCalendar(events) {
             $("#" + dayId + " > #" + dayContentId).html(content);
 
             if (isToday) {
-                $(dayId).toggleClass("today");
+                $("#" + dayId).toggleClass("today");
             }
         }
 
