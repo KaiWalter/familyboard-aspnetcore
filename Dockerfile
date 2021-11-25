@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm32v7
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.0-bullseye-slim-arm32v7
 
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
@@ -29,6 +29,6 @@ RUN mkdir .tokenkeycache
 ENV TOKENKEYCACHEPATH=/app/.tokenkeycache
 
 # application
-COPY ./bin/Debug/net5.0/linux-arm/publish .
+COPY ./bin/Debug/net6.0/linux-arm/publish .
 
 ENTRYPOINT ["dotnet", "familyboard-aspnetcore.dll"]
