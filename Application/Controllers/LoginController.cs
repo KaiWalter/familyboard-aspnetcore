@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Web;
 using System.Diagnostics;
 using FamilyBoard.Application.Models;
+using Microsoft.Identity.Web;
 
 using Constants = FamilyBoard.Core.Constants;
 

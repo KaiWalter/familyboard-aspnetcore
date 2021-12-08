@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Web;
-using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
 {
