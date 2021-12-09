@@ -30,6 +30,8 @@ Over time I added another Pi to the network with [**Pi-hole**](https://pi-hole.n
 +------------------------+     +------------------------+
 ```
 
+> [my sample kiosk / Pi Zero W setup](./kiosk-pi-setup.md)
+
 ### configure Microsoft Graph / Outlook / Live calendar access
 
 > replace `homeserver.my.net` with server's hostname / FQDN on your network
@@ -177,7 +179,5 @@ git update-index --no-assume-unchanged appsettings.Development.json
  [ ] add thread safety to `DiskCacheHandler` [That implementation doesn't look thread safe. (@davidfowl)](https://twitter.com/davidfowl/status/1439272866579562496)
 
 ## documentation backlog
-
-[x] app registrations: <https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade>
 
 [ ] certificate approach
