@@ -8,6 +8,15 @@
     width: 100%;
 }
 
+.slideshow {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: grid;
+    height: 100%;
+    width: 100%;
+}
+
 .main {
     display: grid;
     margin-left: 10px;

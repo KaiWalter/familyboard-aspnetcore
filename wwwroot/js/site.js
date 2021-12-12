@@ -14,6 +14,11 @@ function startMainLoop() {
     MainLoop();
 }
 
+function startSlideshow() {
+    Slideshow();
+}
+
+
 function MainLoop() {
 
     calendarUpdateCounter--;
@@ -37,6 +42,19 @@ function MainLoop() {
     var t = setTimeout(MainLoop, 1000);
 }
 
+function Slideshow() {
+
+    imageUpdateCounter--;
+
+    if (imageUpdateCounter <= 0) {
+        console.log('update image');
+        updateImage();
+        imageUpdateCounter = 30;
+    }
+
+    var t = setTimeout(Slideshow, 1000);
+}
+
 function putMessage(message) {
     $("#message").html(message);
 }
@@ -51,7 +69,7 @@ function putStatus(status) {
 let monthNames;
 let weekDayNames;
 
-function updateCalendar() {
+function initCalendar() {
     if (!monthNames || !weekDayNames) {
         $.ajax({
             type: "get",
@@ -65,6 +83,10 @@ function updateCalendar() {
             }
         });
     }
+}
+
+function updateCalendar() {
+    initCalendar();
 
     $.ajax({
         type: "get",

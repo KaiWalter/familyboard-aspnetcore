@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Slideshow";
+}
+
+<div style="height:100%; display:block;"></div>
+
+<div class="slideshow">
+
+    <div class="imageContainer">
+        <div class="clock">
+            Loading...
+        </div>
+        <div class="imageCreated">
+            Loading...
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        initCalendar();
+        startTime();
+        startSlideshow();
+    });
+</script>
+}
