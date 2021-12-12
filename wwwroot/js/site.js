@@ -14,11 +14,6 @@ function startMainLoop() {
     MainLoop();
 }
 
-function startSlideshow() {
-    Slideshow();
-}
-
-
 function MainLoop() {
 
     calendarUpdateCounter--;
@@ -40,19 +35,6 @@ function MainLoop() {
     putStatus(`next image update ${imageUpdateCounter}s - next calendar update ${calendarUpdateCounter}s`);
 
     var t = setTimeout(MainLoop, 1000);
-}
-
-function Slideshow() {
-
-    imageUpdateCounter--;
-
-    if (imageUpdateCounter <= 0) {
-        console.log('update image');
-        updateImage();
-        imageUpdateCounter = 30;
-    }
-
-    var t = setTimeout(Slideshow, 1000);
 }
 
 function putMessage(message) {
