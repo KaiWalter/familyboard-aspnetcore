@@ -1,5 +1,4 @@
 using FamilyBoard.Application.Models;
-using FamilyBoard.Core.Calendar;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
