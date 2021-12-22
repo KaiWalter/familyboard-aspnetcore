@@ -51,7 +51,7 @@ function putStatus(status) {
 let monthNames;
 let weekDayNames;
 
-function updateCalendar() {
+function initCalendar() {
     if (!monthNames || !weekDayNames) {
         $.ajax({
             type: "get",
@@ -65,6 +65,10 @@ function updateCalendar() {
             }
         });
     }
+}
+
+function updateCalendar() {
+    initCalendar();
 
     $.ajax({
         type: "get",

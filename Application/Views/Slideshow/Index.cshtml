@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Slideshow";
+    Layout = "_SlideshowLayout";
+}
+
+<div class="slideshowContent">
+    <div class="slideshowImages">
+        <img src="#" style="display: none;">
+        <img src="#" style="display: none;">
+    </div>
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        // https://dev.to/codingnepal/automatic-image-slideshow-effect-in-html-css-javascript-3g33
+
+        let nextImageSrc = "#";
+        var indexValue = 0;
+        var alternateIndexValue = 1;
+
+        slideShow();
+
+        function slideShow() {
+
+            let swapIndexValue = indexValue;
+            indexValue = alternateIndexValue;
+            alternateIndexValue = swapIndexValue;
+            
+            const img = document.querySelectorAll("img");
+
+            $.ajax({
+                type: "get",
+                url: "/api/image",
+                context: document.body,
+                success: function (data) {
+                    nextImageSrc = data.src;
+                    img[indexValue].src = nextImageSrc;
+                    img[indexValue].style.display = "block";
+                    img[alternateIndexValue].style.display = "none";
+                    setTimeout(slideShow, 30000);
+                }
+            });
+        }
+    });
+</script>
+}
