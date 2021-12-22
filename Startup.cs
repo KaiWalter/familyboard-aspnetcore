@@ -58,6 +58,8 @@ namespace FamilyBoard
                 options.HandleSameSiteCookieCompatibility();
             });
 
+            services.AddSwaggerGen();
+
             string[] initialScopes = Configuration.GetValue<string>(Constants.GraphScope)?.Split(' ');
 
             // Sign-in users with the Microsoft identity platform
@@ -76,11 +78,11 @@ namespace FamilyBoard
                         .Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
-                .AddMicrosoftIdentityUI()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 });
+
 
             services.AddRazorPages();
             services.Configure<RazorViewEngineOptions>(options =>
@@ -114,6 +116,9 @@ namespace FamilyBoard
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseStaticFiles();
 
