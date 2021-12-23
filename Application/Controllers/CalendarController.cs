@@ -1,18 +1,19 @@
+using FamilyBoard.Application.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FamilyBoard.Core.Calendar;
-using FamilyBoard.Application.Models;
 using System.Globalization;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class CalendarController : ControllerBase
     {
         private readonly ILogger<CalendarController> _logger;
@@ -30,8 +31,13 @@ namespace FamilyBoard.Application.Controllers
             _calendarServices = calendarServices;
         }
 
+
+        /// <summary>
+        /// Retrieves all calendar entries.
+        /// </summary>
         [HttpGet]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(List<CalendarEntry>), StatusCodes.Status200OK,"application/json")]
         public async Task<ActionResult<List<CalendarEntry>>> GetCalendarEntries()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetCalendarEntries));
@@ -50,8 +56,12 @@ namespace FamilyBoard.Application.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Retrieves month and weekday names for configured culture.
+        /// </summary>
         [HttpGet("dateformatinfo")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(DateFormatInfo), StatusCodes.Status200OK,"application/json")]
         public ActionResult<DateFormatInfo> GetDateFormatInfo()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetDateFormatInfo));

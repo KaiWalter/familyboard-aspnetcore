@@ -1,14 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using FamilyBoard.Core.Image;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FamilyBoard.Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class ImageController : ControllerBase
     {
         private readonly ILogger<ImageController> _logger;
@@ -26,8 +27,12 @@ namespace FamilyBoard.Application.Controllers
             _imageService = imageService;
         }
 
+        /// <summary>
+        /// Retrieves the URL of the next image to disply.
+        /// </summary>
         [HttpGet]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(ImageResponse), StatusCodes.Status200OK,"application/json")]
         public async Task<ActionResult<ImageResponse>> GetNextImage()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetNextImage));
