@@ -6,7 +6,7 @@ function startTime() {
     var h = today.getHours().toString().padStart(2, "0");
     var m = today.getMinutes().toString().padStart(2, "0");
     var s = today.getSeconds().toString().padStart(2, "0");
-    $(".clock").html(h + ":" + m + "<span class='sec'>" + s + "</span>");
+    document.querySelector('fb-clock').content = h + ":" + m + ":" + s;
     var t = setTimeout(startTime, 500);
 }
 
