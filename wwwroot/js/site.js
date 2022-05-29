@@ -186,19 +186,21 @@ function updateImage() {
 function renderImage(imageObj) {
     putMessage("updating image");
 
-    $("<img/>").attr("src", imageObj.src).on("load", function() {
-        $(this).remove(), $(".imageContainer").css({
-            background: "#000 url(" + imageObj.src + ") center center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat"
-        });
+    var img = new Image();
+    img.onload = function() {
+        imgContainer = document.getElementsByClassName('imageContainer')[0];
+        imgContainer.style.background = "#000 url(" + imageObj.src + ") center center";
+        imgContainer.style.backgroundSize = "cover";
+        imgContainer.style.backgroundRepeat = "no-repeat";
+    }
+    img.src = imageObj.src;
 
-        var imageCreatedLabel = "";
-        if (imageObj.month && imageObj.year) {
-            imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
-        }
-        $(".imageCreated").html(imageCreatedLabel);
-    });
+    imgCreated = document.getElementsByClassName('imageCreated')[0];
+    var imageCreatedLabel = "";
+    if (imageObj.month && imageObj.year) {
+        imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
+    }
+    imgCreated.innerHTML = imageCreatedLabel;
 
     putMessage("");
 }
