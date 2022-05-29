@@ -132,15 +132,9 @@ function renderCalendar(events) {
     }
 
     // https://dev.to/thepassle/web-components-from-zero-to-hero-4n4m#-a-components-lifecycle
-    // document.querySelector('to-do-app').todos = [
-    //     { text: "Make a to-do list", checked: false },
-    //     { text: "Finish blog post", checked: false }
-    // ];
 
     // fill calendar
     let iDate = currentDate();
-    $("#calendar").empty();
-
     let data = [];
 
     for (w = 0; w < 3; w++) {
@@ -152,51 +146,17 @@ function renderCalendar(events) {
             let iDate = addDays(firstDate, i);
             let isToday = ISO8601_date(iDate) === ISO8601_date(current);
 
-            // handle week number
-            if (wd === 0) {
-                let weekNoDiv = $("<div/>");
-                let weekNoTitle = "<br/><span class='weekofyear'>" + ISO8601_week_no(iDate).toString().padStart(2, "0") + "</span>";
-                weekNoDiv.addClass("week_title").html(weekNoTitle);
-                $("#calendar").append(weekNoDiv);
-            }
-
-            // reset cell
-            let dayCell = $("<div/>");
-            let dayId = "day" + i;
-            let dayContentId = "dayContent" + i;
-            dayCell.attr("id", dayId).addClass("day");
-            // month name on first element or first of month
             let monthTitle = "";
             if (i === 0 || iDate.getDate() == 1) {
                 monthTitle = monthNames[iDate.getMonth()];
             }
-            // day of week and month in each header
-            let dayTitle = "<span class='monthofyear'>" + monthTitle + "</span><br/>" +
-                "<span class='dayofweek'>" + weekDayNames[wd] + "</span>&nbsp;" +
-                "<span class='dayofmonth'>" + iDate.getDate().toString().padStart(2, "0") + "</span>";
 
             let dayData = { monthOfYear: monthTitle, dayOfWeek: weekDayNames[wd], dayOfMonth: iDate.getDate().toString().padStart(2, "0"), events: [] };
-
-            dayCell.html("<div class='dayHeader'><div class='day_title'>" + dayTitle + "</div></div><div id='" + dayContentId + "' class='dayContent'></div>");
-            dayCell.removeClass("today").removeClass("monthfirst").addClass("day");
-            $("#calendar").append(dayCell);
-
-            // build cell content
-            let content = "";
-
             let iDateFormatted = ISO8601_date(iDate);
 
             // render all day events always on top
             events.forEach((entry) => {
                 if (iDateFormatted === entry.date && entry.allDayEvent) {
-                    if (entry.publicHoliday) {
-                        content += "<div class='public_holiday_day'>" + entry.description + "</div>";
-                    } else if (entry.schoolHoliday) {
-                        content += "<div class='school_holiday_day'>" + entry.description + "</div>";
-                    } else {
-                        let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
-                        content += "<div class='all_day" + addClass + "'>" + entry.description + "</div>";
-                    }
                     let eventData = { description: entry.description, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
                     dayData.events.push(eventData);
                 }
@@ -205,18 +165,10 @@ function renderCalendar(events) {
             // render timed events below
             events.forEach((entry) => {
                 if (iDateFormatted === entry.date && !entry.allDayEvent) {
-                    let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
-                    content += "<p class='single_event" + addClass + "'>" + entry.time + " " + entry.description + "</p>";
                     let eventData = { description: entry.description, time: entry.time, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
                     dayData.events.push(eventData);
                 }
             });
-
-            $("#" + dayId + " > #" + dayContentId).html(content);
-
-            if (isToday) {
-                $("#" + dayId).toggleClass("today");
-            }
 
             weekData.days.push(dayData);
         }
@@ -225,6 +177,7 @@ function renderCalendar(events) {
     }
 
     console.log(JSON.stringify(data));
+    document.querySelector('fb-calendar').data = data;
 
     putMessage("");
 }
