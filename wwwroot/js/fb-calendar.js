@@ -137,8 +137,8 @@ class Calendar extends HTMLElement {
         return "<div class='week_title'><br/><span class='weekofyear'>" + weekNo + "</span></div>";
     }
 
-    dayTemplate(monthTitle, dayOfWeek, dayOfMonth, dayContent) {
-        return "<div class='day'>" +
+    dayTemplate(dayClass, monthTitle, dayOfWeek, dayOfMonth, dayContent) {
+        return "<div class='" + dayClass + "'>" +
             "<div class='dayHeader'><div class='day_title'><span class='monthofyear'>" + monthTitle + "</span><br/>" +
             "<span class='dayofweek'>" + dayOfWeek + "</span>&nbsp;" +
             "<span class='dayofmonth'>" + dayOfMonth + "</span></div></div>" +
@@ -169,7 +169,7 @@ class Calendar extends HTMLElement {
 
                     }
                 });
-                this._content += this.dayTemplate(day.monthOfYear, day.dayOfWeek, day.dayOfMonth, dayContent);
+                this._content += this.dayTemplate(day.isToday ? 'today' : 'day', day.monthOfYear, day.dayOfWeek, day.dayOfMonth, dayContent);
             });
         });
 

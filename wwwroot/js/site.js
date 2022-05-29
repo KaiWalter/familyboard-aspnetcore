@@ -151,7 +151,7 @@ function renderCalendar(events) {
                 monthTitle = monthNames[iDate.getMonth()];
             }
 
-            let dayData = { monthOfYear: monthTitle, dayOfWeek: weekDayNames[wd], dayOfMonth: iDate.getDate().toString().padStart(2, "0"), events: [] };
+            let dayData = { monthOfYear: monthTitle, dayOfWeek: weekDayNames[wd], dayOfMonth: iDate.getDate().toString().padStart(2, "0"), isToday: isToday, events: [] };
             let iDateFormatted = ISO8601_date(iDate);
 
             // render all day events always on top
