@@ -2,7 +2,9 @@ class Clock extends HTMLElement {
     constructor() {
         super();
         this._shadowRoot = this.attachShadow({ 'mode': 'open' });
-        this._content = '';
+        this._hh = '00';
+        this._mm = '00';
+        this._ss = '00';
         this._shadowRoot.innerHTML = this.template;
     }
 
@@ -32,13 +34,14 @@ class Clock extends HTMLElement {
     get template() {
         return `
         ${this.style}
-        <div class="clock">${this._content}</div>
+        <div class="clock">${this._hh}:${this._mm}<span class='sec'>${this._ss}</span></div>
         `;
     }
 
-    set content(value) {
-        let parts = value.split(':');
-        this._content = parts[0] + ":" + parts[1] + "<span class='sec'>" + parts[2] + "</span>";
+    set time(value) {
+        this._hh = value.hh
+        this._mm = value.mm
+        this._ss = value.ss
         this._shadowRoot.innerHTML = this.template;
     }
 }

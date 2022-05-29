@@ -3,10 +3,11 @@ var imageUpdateCounter = 1;
 
 function startTime() {
     var today = new Date();
-    var h = today.getHours().toString().padStart(2, "0");
-    var m = today.getMinutes().toString().padStart(2, "0");
-    var s = today.getSeconds().toString().padStart(2, "0");
-    document.querySelector('fb-clock').content = h + ":" + m + ":" + s;
+    document.querySelector('fb-clock').time = {
+        hh: today.getHours().toString().padStart(2, "0"),
+        mm: today.getMinutes().toString().padStart(2, "0"),
+        ss: today.getSeconds().toString().padStart(2, "0")
+    }
     var t = setTimeout(startTime, 500);
 }
 

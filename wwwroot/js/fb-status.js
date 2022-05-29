@@ -28,7 +28,11 @@ class Status extends HTMLElement {
     }
 
     set content(value) {
-        this._content = value;
+        if (value) {
+            this._content = value;
+        } else {
+            this._content = "&nbsp;";
+        }
         this._shadowRoot.innerHTML = this.template;
     }
 }
