@@ -38,11 +38,11 @@ function MainLoop() {
 }
 
 function putMessage(message) {
-    $("#message").html(message);
+    document.querySelector('fb-message').content = message;
 }
 
 function putStatus(status) {
-    $("#status").html(status);
+    document.querySelector('fb-status').content = status;
 }
 
 // --------------------------------------------------------------------------------
@@ -53,33 +53,28 @@ let weekDayNames;
 
 function initCalendar() {
     if (!monthNames || !weekDayNames) {
-        $.ajax({
-            type: "get",
-            url: "/api/calendar/dateformatinfo",
-            context: document.body,
-            success: function(data) {
+        fetch("/api/calendar/dateformatinfo")
+            .then(response => response.json())
+            .then(data => {
                 if (data) {
                     monthNames = data.monthNames;
                     weekDayNames = data.weekDayNames;
                 }
-            }
-        });
+            });
     }
 }
 
 function updateCalendar() {
     initCalendar();
 
-    $.ajax({
-        type: "get",
-        url: "/api/calendar",
-        context: document.body,
-        success: function(data) {
+    fetch("/api/calendar")
+        .then(response => response.json())
+        .then(data => {
             if (data) {
                 renderCalendar(data);
             }
-        }
-    });
+        });
+
 }
 
 function ISO8601_week_no(dt) {
@@ -131,8 +126,6 @@ function renderCalendar(events) {
         wd = firstDate.getDay();
     }
 
-    // https://dev.to/thepassle/web-components-from-zero-to-hero-4n4m#-a-components-lifecycle
-
     // fill calendar
     let iDate = currentDate();
     let data = [];
@@ -176,7 +169,6 @@ function renderCalendar(events) {
         data.push(weekData);
     }
 
-    console.log(JSON.stringify(data));
     document.querySelector('fb-calendar').data = data;
 
     putMessage("");
@@ -186,15 +178,9 @@ function renderCalendar(events) {
 // update image
 
 function updateImage() {
-    $.ajax({
-        type: "get",
-        url: "/api/image",
-        context: document.body,
-        success: function(data) {
-            renderImage(data);
-        }
-    });
-
+    fetch("/api/image")
+        .then(response => response.json())
+        .then(data => renderImage(data));
 }
 
 function renderImage(imageObj) {

@@ -20,22 +20,6 @@
     font-size: small;
 }
 
-.statusBar #message {
-    background-color: #111111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2px 2px 2px 2px;
-}
-
-.statusBar #status {
-    background-color: #111111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2px 2px 2px 2px;
-}
-
 .imageContainer {
     overflow: hidden;
     z-index: 1;
