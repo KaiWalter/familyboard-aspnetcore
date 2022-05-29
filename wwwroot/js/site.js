@@ -132,16 +132,21 @@ function renderCalendar(events) {
     }
 
     // https://dev.to/thepassle/web-components-from-zero-to-hero-4n4m#-a-components-lifecycle
-    document.querySelector('to-do-app').todos = [
-        { text: "Make a to-do list", checked: false },
-        { text: "Finish blog post", checked: false }
-    ];
+    // document.querySelector('to-do-app').todos = [
+    //     { text: "Make a to-do list", checked: false },
+    //     { text: "Finish blog post", checked: false }
+    // ];
 
     // fill calendar
     let iDate = currentDate();
     $("#calendar").empty();
 
-    for (w = 0; w < 3; w++)
+    let data = [];
+
+    for (w = 0; w < 3; w++) {
+        let iDate = addDays(firstDate, w * 7);
+        let weekData = { weekNo: ISO8601_week_no(iDate).toString().padStart(2, "0"), days: [] };
+
         for (wd = 0; wd < 7; wd++) {
             let i = (w * 7) + wd;
             let iDate = addDays(firstDate, i);
@@ -170,6 +175,8 @@ function renderCalendar(events) {
                 "<span class='dayofweek'>" + weekDayNames[wd] + "</span>&nbsp;" +
                 "<span class='dayofmonth'>" + iDate.getDate().toString().padStart(2, "0") + "</span>";
 
+            let dayData = { monthOfYear: monthTitle, dayOfWeek: weekDayNames[wd], dayOfMonth: iDate.getDate().toString().padStart(2, "0"), events: [] };
+
             dayCell.html("<div class='dayHeader'><div class='day_title'>" + dayTitle + "</div></div><div id='" + dayContentId + "' class='dayContent'></div>");
             dayCell.removeClass("today").removeClass("monthfirst").addClass("day");
             $("#calendar").append(dayCell);
@@ -190,6 +197,8 @@ function renderCalendar(events) {
                         let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
                         content += "<div class='all_day" + addClass + "'>" + entry.description + "</div>";
                     }
+                    let eventData = { description: entry.description, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
+                    dayData.events.push(eventData);
                 }
             });
 
@@ -198,6 +207,8 @@ function renderCalendar(events) {
                 if (iDateFormatted === entry.date && !entry.allDayEvent) {
                     let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
                     content += "<p class='single_event" + addClass + "'>" + entry.time + " " + entry.description + "</p>";
+                    let eventData = { description: entry.description, time: entry.time, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
+                    dayData.events.push(eventData);
                 }
             });
 
@@ -206,7 +217,14 @@ function renderCalendar(events) {
             if (isToday) {
                 $("#" + dayId).toggleClass("today");
             }
+
+            weekData.days.push(dayData);
         }
+
+        data.push(weekData);
+    }
+
+    console.log(JSON.stringify(data));
 
     putMessage("");
 }
