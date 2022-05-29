@@ -57,7 +57,7 @@ function initCalendar() {
             type: "get",
             url: "/api/calendar/dateformatinfo",
             context: document.body,
-            success: function (data) {
+            success: function(data) {
                 if (data) {
                     monthNames = data.monthNames;
                     weekDayNames = data.weekDayNames;
@@ -74,7 +74,7 @@ function updateCalendar() {
         type: "get",
         url: "/api/calendar",
         context: document.body,
-        success: function (data) {
+        success: function(data) {
             if (data) {
                 renderCalendar(data);
             }
@@ -130,6 +130,12 @@ function renderCalendar(events) {
         firstDate = addDays(firstDate, -1);
         wd = firstDate.getDay();
     }
+
+    // https://dev.to/thepassle/web-components-from-zero-to-hero-4n4m#-a-components-lifecycle
+    document.querySelector('to-do-app').todos = [
+        { text: "Make a to-do list", checked: false },
+        { text: "Finish blog post", checked: false }
+    ];
 
     // fill calendar
     let iDate = currentDate();
@@ -213,7 +219,7 @@ function updateImage() {
         type: "get",
         url: "/api/image",
         context: document.body,
-        success: function (data) {
+        success: function(data) {
             renderImage(data);
         }
     });
@@ -223,7 +229,7 @@ function updateImage() {
 function renderImage(imageObj) {
     putMessage("updating image");
 
-    $("<img/>").attr("src", imageObj.src).on("load", function () {
+    $("<img/>").attr("src", imageObj.src).on("load", function() {
         $(this).remove(), $(".imageContainer").css({
             background: "#000 url(" + imageObj.src + ") center center",
             backgroundSize: "cover",
