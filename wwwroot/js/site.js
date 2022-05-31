@@ -193,15 +193,15 @@ function renderImage(imageObj) {
         imgContainer.style.background = "#000 url(" + imageObj.src + ") center center";
         imgContainer.style.backgroundSize = "cover";
         imgContainer.style.backgroundRepeat = "no-repeat";
+
+        imgCreated = document.getElementsByClassName('imageCreated')[0];
+        var imageCreatedLabel = "";
+        if (imageObj.month && imageObj.year) {
+            imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
+        }
+        imgCreated.innerHTML = imageCreatedLabel;
     }
     img.src = imageObj.src;
-
-    imgCreated = document.getElementsByClassName('imageCreated')[0];
-    var imageCreatedLabel = "";
-    if (imageObj.month && imageObj.year) {
-        imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
-    }
-    imgCreated.innerHTML = imageCreatedLabel;
 
     putMessage("");
 }
