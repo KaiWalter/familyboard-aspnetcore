@@ -456,5 +456,6 @@ $RECYCLE.BIN/
 # FamilyBoard specific
 msalAccountActivityStore.json
 accessTokens.json
+.imagesplayed.json
 key*
 wwwroot/bundle/

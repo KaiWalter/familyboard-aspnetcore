@@ -27,6 +27,7 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Path=$CERTNAME
 WORKDIR /app
 RUN mkdir .tokenkeycache
 ENV TOKENKEYCACHEPATH=/app/.tokenkeycache
+ENV IMAGESPLAYEDPATH=/app/.imagesplayed.json
 
 # application
 COPY ./bin/Debug/net6.0/linux-arm/publish .
