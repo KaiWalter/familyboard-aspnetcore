@@ -3,10 +3,11 @@ var imageUpdateCounter = 1;
 
 function startTime() {
     var today = new Date();
-    var h = today.getHours().toString().padStart(2, "0");
-    var m = today.getMinutes().toString().padStart(2, "0");
-    var s = today.getSeconds().toString().padStart(2, "0");
-    $(".clock").html(h + ":" + m + "<span class='sec'>" + s + "</span>");
+    document.querySelector('fb-clock').time = {
+        hh: today.getHours().toString().padStart(2, "0"),
+        mm: today.getMinutes().toString().padStart(2, "0"),
+        ss: today.getSeconds().toString().padStart(2, "0")
+    }
     var t = setTimeout(startTime, 500);
 }
 
@@ -38,11 +39,11 @@ function MainLoop() {
 }
 
 function putMessage(message) {
-    $("#message").html(message);
+    document.querySelector('fb-message').content = message;
 }
 
 function putStatus(status) {
-    $("#status").html(status);
+    document.querySelector('fb-status').content = status;
 }
 
 // --------------------------------------------------------------------------------
@@ -53,33 +54,28 @@ let weekDayNames;
 
 function initCalendar() {
     if (!monthNames || !weekDayNames) {
-        $.ajax({
-            type: "get",
-            url: "/api/calendar/dateformatinfo",
-            context: document.body,
-            success: function (data) {
+        fetch("/api/calendar/dateformatinfo")
+            .then(response => response.json())
+            .then(data => {
                 if (data) {
                     monthNames = data.monthNames;
                     weekDayNames = data.weekDayNames;
                 }
-            }
-        });
+            });
     }
 }
 
 function updateCalendar() {
     initCalendar();
 
-    $.ajax({
-        type: "get",
-        url: "/api/calendar",
-        context: document.body,
-        success: function (data) {
+    fetch("/api/calendar")
+        .then(response => response.json())
+        .then(data => {
             if (data) {
                 renderCalendar(data);
             }
-        }
-    });
+        });
+
 }
 
 function ISO8601_week_no(dt) {
@@ -133,74 +129,48 @@ function renderCalendar(events) {
 
     // fill calendar
     let iDate = currentDate();
-    $("#calendar").empty();
+    let data = [];
 
-    for (w = 0; w < 3; w++)
+    for (w = 0; w < 3; w++) {
+        let iDate = addDays(firstDate, w * 7);
+        let weekData = { weekNo: ISO8601_week_no(iDate).toString().padStart(2, "0"), days: [] };
+
         for (wd = 0; wd < 7; wd++) {
             let i = (w * 7) + wd;
             let iDate = addDays(firstDate, i);
             let isToday = ISO8601_date(iDate) === ISO8601_date(current);
 
-            // handle week number
-            if (wd === 0) {
-                let weekNoDiv = $("<div/>");
-                let weekNoTitle = "<br/><span class='weekofyear'>" + ISO8601_week_no(iDate).toString().padStart(2, "0") + "</span>";
-                weekNoDiv.addClass("week_title").html(weekNoTitle);
-                $("#calendar").append(weekNoDiv);
-            }
-
-            // reset cell
-            let dayCell = $("<div/>");
-            let dayId = "day" + i;
-            let dayContentId = "dayContent" + i;
-            dayCell.attr("id", dayId).addClass("day");
-            // month name on first element or first of month
             let monthTitle = "";
             if (i === 0 || iDate.getDate() == 1) {
                 monthTitle = monthNames[iDate.getMonth()];
             }
-            // day of week and month in each header
-            let dayTitle = "<span class='monthofyear'>" + monthTitle + "</span><br/>" +
-                "<span class='dayofweek'>" + weekDayNames[wd] + "</span>&nbsp;" +
-                "<span class='dayofmonth'>" + iDate.getDate().toString().padStart(2, "0") + "</span>";
 
-            dayCell.html("<div class='dayHeader'><div class='day_title'>" + dayTitle + "</div></div><div id='" + dayContentId + "' class='dayContent'></div>");
-            dayCell.removeClass("today").removeClass("monthfirst").addClass("day");
-            $("#calendar").append(dayCell);
-
-            // build cell content
-            let content = "";
-
+            let dayData = { monthOfYear: monthTitle, dayOfWeek: weekDayNames[wd], dayOfMonth: iDate.getDate().toString().padStart(2, "0"), isToday: isToday, events: [] };
             let iDateFormatted = ISO8601_date(iDate);
 
             // render all day events always on top
             events.forEach((entry) => {
                 if (iDateFormatted === entry.date && entry.allDayEvent) {
-                    if (entry.publicHoliday) {
-                        content += "<div class='public_holiday_day'>" + entry.description + "</div>";
-                    } else if (entry.schoolHoliday) {
-                        content += "<div class='school_holiday_day'>" + entry.description + "</div>";
-                    } else {
-                        let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
-                        content += "<div class='all_day" + addClass + "'>" + entry.description + "</div>";
-                    }
+                    let eventData = { description: entry.description, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
+                    dayData.events.push(eventData);
                 }
             });
 
             // render timed events below
             events.forEach((entry) => {
                 if (iDateFormatted === entry.date && !entry.allDayEvent) {
-                    let addClass = (entry.isPrimary ? " primary_calendar" : "") + (entry.isSecondary ? " secondary_calendar" : "");
-                    content += "<p class='single_event" + addClass + "'>" + entry.time + " " + entry.description + "</p>";
+                    let eventData = { description: entry.description, time: entry.time, isPrimary: entry.isPrimary, isSecondary: entry.isSecondary, allDayEvent: entry.allDayEvent, publicHoliday: entry.publicHoliday, schoolHoliday: entry.schoolHoliday };
+                    dayData.events.push(eventData);
                 }
             });
 
-            $("#" + dayId + " > #" + dayContentId).html(content);
-
-            if (isToday) {
-                $("#" + dayId).toggleClass("today");
-            }
+            weekData.days.push(dayData);
         }
+
+        data.push(weekData);
+    }
+
+    document.querySelector('fb-calendar').data = data;
 
     putMessage("");
 }
@@ -209,33 +179,29 @@ function renderCalendar(events) {
 // update image
 
 function updateImage() {
-    $.ajax({
-        type: "get",
-        url: "/api/image",
-        context: document.body,
-        success: function (data) {
-            renderImage(data);
-        }
-    });
-
+    fetch("/api/image")
+        .then(response => response.json())
+        .then(data => renderImage(data));
 }
 
 function renderImage(imageObj) {
     putMessage("updating image");
 
-    $("<img/>").attr("src", imageObj.src).on("load", function () {
-        $(this).remove(), $(".imageContainer").css({
-            background: "#000 url(" + imageObj.src + ") center center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat"
-        });
+    var img = new Image();
+    img.onload = function() {
+        imgContainer = document.getElementsByClassName('imageContainer')[0];
+        imgContainer.style.background = "#000 url(" + imageObj.src + ") center center";
+        imgContainer.style.backgroundSize = "cover";
+        imgContainer.style.backgroundRepeat = "no-repeat";
 
+        imgCreated = document.getElementsByClassName('imageCreated')[0];
         var imageCreatedLabel = "";
         if (imageObj.month && imageObj.year) {
             imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
         }
-        $(".imageCreated").html(imageCreatedLabel);
-    });
+        imgCreated.innerHTML = imageCreatedLabel;
+    }
+    img.src = imageObj.src;
 
     putMessage("");
 }

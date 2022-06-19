@@ -20,22 +20,6 @@
     font-size: small;
 }
 
-.statusBar #message {
-    background-color: #111111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2px 2px 2px 2px;
-}
-
-.statusBar #status {
-    background-color: #111111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2px 2px 2px 2px;
-}
-
 .imageContainer {
     overflow: hidden;
     z-index: 1;
@@ -48,23 +32,6 @@
     height: 100%;
 }
 
-.clock {
-    margin-top: 30px;
-    width: 100%;
-    color: white;
-    font-size: 500%;
-    text-align: right;
-    text-shadow: 2px 2px 2px #333;
-}
-
-.clock .sec {
-    font-size: 0.4em;
-    padding-left: 5px;
-    padding-right: 20px;
-    position: relative;
-    top: -1em;
-}
-
 .imageCreated {
     left: 30px;
     position: absolute;
@@ -72,114 +39,4 @@
     height: 5%;
     color: white;
     font-size: 0.8em;
-}
-
-#calendar {
-    display: grid;
-    grid-template-columns: 1fr repeat(7, 3fr);
-    grid-template-rows: repeat(3, 1fr);
-}
-
-.day {
-    font-size: 1em;
-    margin-left: 3px;
-    margin-right: 3px;
-}
-
-.week_title {
-    line-height: 0.9em;
-    margin-left: 5px;
-    margin-top: 1px;
-    text-align: center;
-    font-size: 2em;
-    padding: 0 0 0 0;
-}
-
-.week_title .weekofyear {
-    font-size: large;
-}
-
-.dayHeader {
-    text-align: center;
-    font-size: 2em;
-}
-
-.dayContent {
-    text-align: left;
-    font-size: 2em;
-}
-
-.day_title {
-    line-height: 0.8em;
-    margin-top: 1px;
-    margin-bottom: 5px;
-    padding: 0 0 0 0;
-    border-bottom: 1px solid lightgray;
-}
-
-.day_title .dayofmonth {
-    font-size: x-large;
-}
-
-.day_title .dayofweek {
-    font-size: x-large;
-}
-
-.day_title .monthofyear {
-    font-size: large;
-}
-
-.today {
-    font-size: 1em;
-    background-color: dimgray;
-    border-radius: 3px;
-}
-
-.single_event {
-    font-size: medium;
-    line-height: 1em;
-}
-
-.primary_calendar {
-    border-left: 2px solid white;
-}
-
-.secondary_calendar {
-    border-left: 2px solid blue;
-}
-
-.all_day {
-    background-color: lightgray;
-    color: black;
-    font-size: medium;
-    line-height: 2em;
-    padding-left: 2px;
-    padding-right: 2px;
-    margin-bottom: 2px;
-    border-radius: 3px;
-}
-
-.public_holiday_day {
-    opacity: 1;
-    color: lightcyan;
-    border: 1px solid white;
-    font-size: medium;
-    font-weight: bold;
-    text-align: center;
-    line-height: 2em;
-    margin-bottom: 2px;
-    border-radius: 3px;
-}
-
-.school_holiday_day {
-    opacity: 1;
-    color: lightcyan;
-    border: 1px solid white;
-    font-size: medium;
-    text-align: center;
-    line-height: 2em;
-    padding-left: 2px;
-    padding-right: 2px;
-    margin-bottom: 2px;
-    border-radius: 3px;
 }

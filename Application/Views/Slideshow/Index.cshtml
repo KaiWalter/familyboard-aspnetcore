@@ -12,7 +12,7 @@
 
 @section scripts {
 <script type="text/javascript">
-    $(document).ready(function () {
+    var callback = function () {
         // https://dev.to/codingnepal/automatic-image-slideshow-effect-in-html-css-javascript-3g33
 
         let nextImageSrc = "#";
@@ -26,22 +26,28 @@
             let swapIndexValue = indexValue;
             indexValue = alternateIndexValue;
             alternateIndexValue = swapIndexValue;
-            
+
             const img = document.querySelectorAll("img");
 
-            $.ajax({
-                type: "get",
-                url: "/api/image",
-                context: document.body,
-                success: function (data) {
+            fetch("/api/image")
+                .then(response => response.json())
+                .then(data => {
                     nextImageSrc = data.src;
                     img[indexValue].src = nextImageSrc;
                     img[indexValue].style.display = "block";
                     img[alternateIndexValue].style.display = "none";
                     setTimeout(slideShow, 30000);
-                }
-            });
+                });
         }
-    });
+    };
+
+    if (
+        document.readyState === "complete" ||
+        (document.readyState !== "loading" && !document.documentElement.doScroll)
+    ) {
+        callback();
+    } else {
+        document.addEventListener("DOMContentLoaded", callback);
+    }
 </script>
 }

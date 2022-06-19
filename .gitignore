@@ -457,3 +457,4 @@ $RECYCLE.BIN/
 msalAccountActivityStore.json
 accessTokens.json
 key*
+wwwroot/bundle/

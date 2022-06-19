@@ -6,9 +6,7 @@
 
     <div class="imageContainer">
         <div class="imageOverlay">
-            <div class="clock">
-                Loading...
-            </div>
+            <fb-clock></fb-clock>
             <div class="imageCreated">
                 Loading...
             </div>
@@ -16,16 +14,10 @@
     </div>
 
     <div class="main">
-        <div id="calendar">
-            <div>Loading...</div>
-        </div>
+        <fb-calendar></fb-calendar>
         <div class="statusBar">
-            <div id="message">
-                Loading...
-            </div>
-            <div id="status">
-                Loading...
-            </div>
+            <fb-message></fb-message>
+            <fb-status></fb-status>
         </div>
     </div>
 
@@ -33,9 +25,18 @@
 
 @section scripts {
 <script type="text/javascript">
-    $(document).ready(function () {
-        startTime();
-        startMainLoop();
-    });
+var callback = function() {
+    startTime();
+    startMainLoop();
+}; 
+
+if (
+    document.readyState === "complete" ||
+    (document.readyState !== "loading" && !document.documentElement.doScroll)
+) {
+  callback();
+} else {
+  document.addEventListener("DOMContentLoaded", callback);
+}
 </script>
 }
