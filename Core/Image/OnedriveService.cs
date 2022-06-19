@@ -60,7 +60,7 @@ namespace FamilyBoard.Core.Image
                 // choose random image - only choose from first half based on sort order
                 var imageList = _imagesPlayed.ToList().OrderBy(x => x.Value.Counter).ThenBy(x => x.Value.LastPlayed).ToArray();
                 var rnd = new Random();
-                var index = rnd.Next(imageList.Count() / 2);
+                var index = rnd.Next(imageList.Count() < 10 ? imageList.Count() : imageList.Count() / 2);
                 var selectedImage = imageList[index];
 
                 // find choosen image in OneDrive filtered list
@@ -105,7 +105,10 @@ namespace FamilyBoard.Core.Image
             if (File.Exists(_imagesPlayedPath))
             {
                 string json = await File.ReadAllTextAsync(_imagesPlayedPath);
-                _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(json);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(json);
+                }
             }
 
             foreach (var kv in _imagesPlayed)
