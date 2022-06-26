@@ -11,6 +11,7 @@ namespace FamilyBoard.Core.Image
 {
     public class OnedriveService : IImageService
     {
+        private const int RESET_PLAYED_IMAGES_MIN_COUNTER = 5;
         private readonly ILogger<OnedriveService> _logger;
         private readonly IGraphService _graphService;
         private readonly IConfiguration _configuration;
@@ -102,6 +103,7 @@ namespace FamilyBoard.Core.Image
 
         private async Task MergeImagesPlayed(IEnumerable<Microsoft.Graph.DriveItem> filteredImages)
         {
+            // create list of images played if not exists
             if (File.Exists(_imagesPlayedPath))
             {
                 string json = await File.ReadAllTextAsync(_imagesPlayedPath);
@@ -111,11 +113,13 @@ namespace FamilyBoard.Core.Image
                 }
             }
 
+            // reset indicator whether image still exists on OneDrive
             foreach (var kv in _imagesPlayed)
             {
                 kv.Value.Exists = false;
             }
 
+            // update indicator whether image still exists on OneDrive and add new images
             foreach (var imageMergeItem in filteredImages)
             {
                 if (_imagesPlayed.ContainsKey(imageMergeItem.Name))
@@ -133,6 +137,17 @@ namespace FamilyBoard.Core.Image
                 }
             }
 
+            // reset all counters if all images have been played >= x times
+            var firstItem = _imagesPlayed.ToList().OrderBy(x => x.Value.Counter).ThenBy(x => x.Value.LastPlayed).First();
+            if (firstItem.Value.Counter >= RESET_PLAYED_IMAGES_MIN_COUNTER)
+            {
+                foreach (var kv in _imagesPlayed)
+                {
+                    kv.Value.Counter = 0;
+                }
+            }
+
+            // remove images that are not anymore on OneDrive
             foreach (var kv in _imagesPlayed.ToList().Where(x => !x.Value.Exists))
             {
                 _imagesPlayed.Remove(kv.Key);
