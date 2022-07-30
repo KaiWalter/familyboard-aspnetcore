@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.0-bullseye-slim-arm32v7
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.7-bullseye-slim-arm32v7
 
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
