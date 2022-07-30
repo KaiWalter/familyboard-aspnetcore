@@ -5,6 +5,7 @@ using Microsoft.Identity.Client;
 using Microsoft.Identity.Web.TokenCacheProviders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace FamilyBoard.Core.Graph
 {
@@ -24,6 +25,22 @@ namespace FamilyBoard.Core.Graph
             _configuration = configuration;
             _msalAccountActivityStore = msalAccountActivityStore;
             _msalTokenCacheProvider = msalTokenCacheProvider;
+        }
+
+        public async Task<AuthenticationResult> GetAccessToken()
+        {
+            string[] scopes = _configuration.GetValue<string>(Constants.GraphScope)?.Split(' ');
+            IConfidentialClientApplication app = GetConfidentialClientApplication();
+            var account = await _msalAccountActivityStore.GetMsalAccountLastActivity();
+            var token = await app.AcquireTokenSilent(scopes, new MsalAccount
+            {
+                HomeAccountId = new AccountId(
+                                        account.AccountIdentifier,
+                                        account.AccountObjectId,
+                                        account.AccountTenantId)
+            }).ExecuteAsync();
+
+            return token;
         }
 
         public GraphServiceClient GetGraphServiceClient()

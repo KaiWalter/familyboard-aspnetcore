@@ -1,9 +1,12 @@
 using Microsoft.Graph;
+using Microsoft.Identity.Client;
+using System.Threading.Tasks;
 
 namespace FamilyBoard.Core.Graph
 {
     public interface IGraphService
     {
-        public GraphServiceClient GetGraphServiceClient();
+        GraphServiceClient GetGraphServiceClient();
+        Task<AuthenticationResult> GetAccessToken();
     }
 }
