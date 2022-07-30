@@ -60,16 +60,19 @@ namespace FamilyBoard.Application.Controllers
         {
             _logger.LogTrace("REQUEST:" + nameof(ConnectionCheck));
 
-            var graphServiceClient = _graphService.GetGraphServiceClient();
-
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(graphServiceClient.BaseUrl);
-            var response = await client.GetAsync("");
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = "curl";
+            process.StartInfo.Arguments = "https://graph.microsoft.com/v1.0";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            string consoleResult = process.StandardOutput.ReadToEnd();
 
             var result = new
             {
-                BaseUrl = graphServiceClient.BaseUrl,
-                Response = response,
+                consoleResult,
             };
 
             return Ok(result);
