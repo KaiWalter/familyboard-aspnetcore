@@ -56,13 +56,15 @@ namespace FamilyBoard.Application.Controllers
         [HttpGet(nameof(ConnectionCheck))]
         [AllowAnonymous]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> ConnectionCheck()
+        public ActionResult<object> ConnectionCheck()
         {
             _logger.LogTrace("REQUEST:" + nameof(ConnectionCheck));
 
+            var graphServiceClient = _graphService.GetGraphServiceClient();
+
             var process = new System.Diagnostics.Process();
             process.StartInfo.FileName = "curl";
-            process.StartInfo.Arguments = "https://graph.microsoft.com/v1.0";
+            process.StartInfo.Arguments = graphServiceClient.BaseUrl;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;

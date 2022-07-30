@@ -15,7 +15,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
-ENV CERTPASS=$(pwgen)
+ARG CERTPASS="not_set"
+ENV CERTPASS=${CERTPASS}
 RUN openssl req -x509 \
     -passout env:CERTPASS \
     -subj "/CN=familyboard.my.net" \

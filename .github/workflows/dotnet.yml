@@ -63,12 +63,19 @@ jobs:
       run: |        
         echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
 
+    - name: Install Package pwgen
+      uses: ConorMacBride/install-package@v1.1.0        
+      with:
+        apt: pwgen
+
     - name: Run Buildx (push image)      
       if: success()      
-      run: |        
+      run: |
+        export CERTPASS=`pwgen`
         docker buildx build \
           --platform ${{ steps.prepare.outputs.docker_platform }} \
           --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
           --tag ${{ steps.prepare.outputs.docker_image }}:latest \
+          --build-arg CERTPASS=$CERTPASS \
           --file ./Dockerfile \
           --output type=image,push=true .
