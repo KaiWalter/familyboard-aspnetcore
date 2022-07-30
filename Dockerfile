@@ -1,5 +1,18 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0.7-bullseye-slim-arm32v7
 
+# setup sources - https://linuxconfig.org/debian-apt-get-bullseye-sources-list
+RUN echo 'deb http://ftp.de.debian.org/debian/ bullseye main contrib non-free\n\
+deb-src http://ftp.de.debian.org/debian/ bullseye main contrib non-free\n\
+deb http://ftp2.de.debian.org/debian/ bullseye main contrib non-free\n\
+deb-src http://ftp2.de.debian.org/debian/ bullseye main contrib non-free'\
+> /etc/apt/sources.list \
+&& apt-get update
+
+RUN apt-get install -y bind9-dnsutils curl
+
+# clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
 ENV CERTPASS=$(pwgen)
