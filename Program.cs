@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using System.Net;
+using System.Text.Encodings.Web;
 
 // Configure services
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +25,22 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler(errorApp =>
+    {
+        errorApp.Run(async context =>
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "text/html";
+
+            var feature = context.Features.Get<IExceptionHandlerFeature>();
+
+            if (feature != null)
+            {
+                await context.Response.WriteAsync($"<h1>Custom Error Page</h1> {HtmlEncoder.Default.Encode(feature.Error.Message)}");
+                await context.Response.WriteAsync($"<hr />{HtmlEncoder.Default.Encode(feature.Error.Source)}");
+            }
+        });
+    });
     app.UseHsts();
 }
 
