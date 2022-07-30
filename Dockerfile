@@ -8,7 +8,7 @@ deb-src http://ftp2.de.debian.org/debian/ bullseye main contrib non-free'\
 > /etc/apt/sources.list \
 && apt-get update
 
-RUN apt-get install -y bind9-dnsutils curl
+RUN apt-get install -y bind9-dnsutils curl iputils-ping
 
 # clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
