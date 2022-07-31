@@ -53,18 +53,19 @@ namespace FamilyBoard.Application.Controllers
             return Ok(result);
         }
 
-        [HttpGet(nameof(ConnectionCheck))]
+        [HttpGet(nameof(CurlCheck))]
         [AllowAnonymous]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public ActionResult<object> ConnectionCheck()
+        public async Task<ActionResult<object>> CurlCheck()
         {
-            _logger.LogTrace("REQUEST:" + nameof(ConnectionCheck));
+            _logger.LogTrace("REQUEST:" + nameof(CurlCheck));
 
             var graphServiceClient = _graphService.GetGraphServiceClient();
+            var token = await _graphService.GetAccessToken();
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.FileName = "curl";
-            process.StartInfo.Arguments = graphServiceClient.BaseUrl;
+            process.StartInfo.Arguments = $"-H \"Authorization: Bearer {token.AccessToken}\" {graphServiceClient.BaseUrl}/me";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
