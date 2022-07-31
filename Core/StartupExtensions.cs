@@ -52,8 +52,6 @@ public static class StartupExtensions
 
     public static IServiceCollection AddUIAndApiConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddApplicationInsightsTelemetry();
-        
         string[] initialScopes = configuration.GetValue<string>(Constants.GraphScope)?.Split(' ');
 
         // Sign-in users with the Microsoft identity platform
