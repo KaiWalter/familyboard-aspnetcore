@@ -5,8 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
-using System.Net.NetworkInformation;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
@@ -42,7 +41,7 @@ namespace FamilyBoard.Application.Controllers
             client.Timeout = TimeSpan.FromMinutes(10);
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
             client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
-            var response = await client.GetAsync("/me");
+            var response = await client.GetAsync("me");
 
             var result = new
             {
