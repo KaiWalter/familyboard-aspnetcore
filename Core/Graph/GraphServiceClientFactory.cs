@@ -3,6 +3,7 @@ using Microsoft.Graph;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FamilyBoard.Core.Graph
@@ -13,7 +14,10 @@ namespace FamilyBoard.Core.Graph
         public static GraphServiceClient GetAuthenticatedGraphClient(Func<Task<string>> acquireAccessToken,
                                                                                  string baseUrl)
         {
-            return new GraphServiceClient(baseUrl, new CustomAuthenticationProvider(acquireAccessToken));
+            var httpClient = GraphClientFactory.Create(new CustomAuthenticationProvider(acquireAccessToken));
+            httpClient.BaseAddress = new Uri(baseUrl);
+            httpClient.Timeout = Timeout.InfiniteTimeSpan;
+            return new GraphServiceClient(httpClient);
         }
     }
 

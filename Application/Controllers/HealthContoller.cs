@@ -44,10 +44,11 @@ namespace FamilyBoard.Application.Controllers
             var client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             client.BaseAddress = new Uri("https://graph.microsoft.com");
 
             var response = await client.GetAsync("v1.0/me");
-            var result = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadAsStringAsync() + "|||||||" + response.ToString();
 
             _logger.LogTrace($"RESULT:{result}");
             return Ok(new HealthResult { Result = result });
@@ -61,14 +62,32 @@ namespace FamilyBoard.Application.Controllers
 
             var client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             client.BaseAddress = new Uri("https://graph.microsoft.com");
 
             var response = await client.GetAsync("v1.0");
-            var result = await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadAsStringAsync() + "|||||||" + response.ToString();
 
             _logger.LogTrace($"RESULT:{result}");
             return Ok(new HealthResult { Result = result });
         }
+
+        // [HttpGet(nameof(HttpClient2))]
+        // [AllowAnonymous]
+        // public async Task<ActionResult<HealthResult>> HttpClient2()
+        // {
+        //     _logger.LogTrace("REQUEST:" + nameof(HttpClient2));
+
+        //     var client = new HttpClient();
+        //     client.Timeout = Timeout.InfiniteTimeSpan;
+        //     client.BaseAddress = new Uri("https://ferien-api.de");
+
+        //     var response = await client.GetAsync("api/v1/holidays/BW");
+        //     var result = await response.Content.ReadAsStringAsync();
+
+        //     _logger.LogTrace($"RESULT:{result}");
+        //     return Ok(new HealthResult { Result = result });
+        // }
 
         [HttpGet(nameof(CurlWithToken))]
         [AllowAnonymous]
