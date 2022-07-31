@@ -38,10 +38,10 @@ namespace FamilyBoard.Application.Controllers
             var token = await _graphService.GetAccessToken();
 
             var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(10);
+            client.Timeout = Timeout.InfiniteTimeSpan;
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
-            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
-            var response = await client.GetAsync("me");
+            client.BaseAddress = new Uri("https://graph.microsoft.com");
+            var response = await client.GetAsync("v1.0/me");
 
             var result = new
             {
@@ -59,9 +59,9 @@ namespace FamilyBoard.Application.Controllers
             _logger.LogTrace("REQUEST:" + nameof(HttpClientWithoutToken));
 
             var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(10);
-            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
-            var response = await client.GetAsync("");
+            client.Timeout = Timeout.InfiniteTimeSpan;
+            client.BaseAddress = new Uri("https://graph.microsoft.com");
+            var response = await client.GetAsync("v1.0");
 
             var result = new
             {
