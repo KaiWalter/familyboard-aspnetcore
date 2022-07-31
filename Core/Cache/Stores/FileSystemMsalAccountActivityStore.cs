@@ -45,6 +45,7 @@ namespace FamilyBoard.Core.Cache.Stores
         private void WriteToDisk()
         {
             var json = JsonSerializer.Serialize(_cache);
+            File.Delete(_activitiesPath);
             File.WriteAllText(_activitiesPath, json);
             _logger.LogInformation($"MSAL activities written to cache {_activitiesPath}");
         }
