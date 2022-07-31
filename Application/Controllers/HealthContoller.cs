@@ -29,43 +29,84 @@ namespace FamilyBoard.Application.Controllers
             _graphService = graphService;
         }
 
-        [HttpGet]
+        [HttpGet(nameof(HttpClientWithToken))]
         [AllowAnonymous]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> GetHealth()
+        public async Task<ActionResult<object>> HttpClientWithToken()
         {
-            _logger.LogTrace("REQUEST:" + nameof(GetHealth));
+            _logger.LogTrace("REQUEST:" + nameof(HttpClientWithToken));
 
-            var graphServiceClient = _graphService.GetGraphServiceClient();
             var token = await _graphService.GetAccessToken();
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
-            client.BaseAddress = new Uri(graphServiceClient.BaseUrl);
+            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
             var response = await client.GetAsync("/me");
 
             var result = new
             {
-                BaseUrl = graphServiceClient.BaseUrl,
                 Response = response,
             };
 
             return Ok(result);
         }
 
-        [HttpGet(nameof(CurlCheck))]
+        [HttpGet(nameof(HttpClientWithoutToken))]
         [AllowAnonymous]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> CurlCheck()
+        public async Task<ActionResult<object>> HttpClientWithoutToken()
         {
-            _logger.LogTrace("REQUEST:" + nameof(CurlCheck));
+            _logger.LogTrace("REQUEST:" + nameof(HttpClientWithoutToken));
 
-            var graphServiceClient = _graphService.GetGraphServiceClient();
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
+            var response = await client.GetAsync("");
+
+            var result = new
+            {
+                Response = response,
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet(nameof(CurlWithToken))]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
+        public async Task<ActionResult<object>> CurlWithToken()
+        {
+            _logger.LogTrace("REQUEST:" + nameof(CurlWithToken));
+
             var token = await _graphService.GetAccessToken();
 
             var process = new System.Diagnostics.Process();
             process.StartInfo.FileName = "curl";
-            process.StartInfo.Arguments = $"-H \"Authorization: Bearer {token.AccessToken}\" {graphServiceClient.BaseUrl}/me";
+            process.StartInfo.Arguments = $"-H \"Authorization: Bearer {token.AccessToken}\" https://graph.microsoft.com/v1.0/me";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            string consoleResult = process.StandardOutput.ReadToEnd();
+
+            var result = new
+            {
+                consoleResult,
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet(nameof(CurlWithoutToken))]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
+        public async Task<ActionResult<object>> CurlWithoutToken()
+        {
+            _logger.LogTrace("REQUEST:" + nameof(CurlWithoutToken));
+
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = "curl";
+            process.StartInfo.Arguments = "https://graph.microsoft.com/v1.0";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
