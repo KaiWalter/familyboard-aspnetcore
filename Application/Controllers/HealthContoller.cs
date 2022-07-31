@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
 {
+    public class HealthResult
+    {
+        public string Result { get; set; }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
@@ -30,8 +35,7 @@ namespace FamilyBoard.Application.Controllers
 
         [HttpGet(nameof(HttpClientWithToken))]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> HttpClientWithToken()
+        public async Task<ActionResult<HealthResult>> HttpClientWithToken()
         {
             _logger.LogTrace("REQUEST:" + nameof(HttpClientWithToken));
 
@@ -41,40 +45,34 @@ namespace FamilyBoard.Application.Controllers
             client.Timeout = Timeout.InfiniteTimeSpan;
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
             client.BaseAddress = new Uri("https://graph.microsoft.com");
+
             var response = await client.GetAsync("v1.0/me");
+            var result = await response.Content.ReadAsStringAsync();
 
-            var result = new
-            {
-                Response = response,
-            };
-
-            return Ok(result);
+            _logger.LogTrace($"RESULT:{result}");
+            return Ok(new HealthResult { Result = result });
         }
 
         [HttpGet(nameof(HttpClientWithoutToken))]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> HttpClientWithoutToken()
+        public async Task<ActionResult<HealthResult>> HttpClientWithoutToken()
         {
             _logger.LogTrace("REQUEST:" + nameof(HttpClientWithoutToken));
 
             var client = new HttpClient();
             client.Timeout = Timeout.InfiniteTimeSpan;
             client.BaseAddress = new Uri("https://graph.microsoft.com");
+
             var response = await client.GetAsync("v1.0");
+            var result = await response.Content.ReadAsStringAsync();
 
-            var result = new
-            {
-                Response = response,
-            };
-
-            return Ok(result);
+            _logger.LogTrace($"RESULT:{result}");
+            return Ok(new HealthResult { Result = result });
         }
 
         [HttpGet(nameof(CurlWithToken))]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> CurlWithToken()
+        public async Task<ActionResult<HealthResult>> CurlWithToken()
         {
             _logger.LogTrace("REQUEST:" + nameof(CurlWithToken));
 
@@ -88,20 +86,15 @@ namespace FamilyBoard.Application.Controllers
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.Start();
+
             string consoleResult = process.StandardOutput.ReadToEnd();
-
-            var result = new
-            {
-                consoleResult,
-            };
-
-            return Ok(result);
+            _logger.LogTrace($"RESULT:{consoleResult}");
+            return Ok(new HealthResult { Result = consoleResult });
         }
 
         [HttpGet(nameof(CurlWithoutToken))]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK, "application/json")]
-        public async Task<ActionResult<object>> CurlWithoutToken()
+        public ActionResult<HealthResult> CurlWithoutToken()
         {
             _logger.LogTrace("REQUEST:" + nameof(CurlWithoutToken));
 
@@ -113,14 +106,10 @@ namespace FamilyBoard.Application.Controllers
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.Start();
+
             string consoleResult = process.StandardOutput.ReadToEnd();
-
-            var result = new
-            {
-                consoleResult,
-            };
-
-            return Ok(result);
+            _logger.LogTrace($"RESULT:{consoleResult}");
+            return Ok(new HealthResult { Result = consoleResult });
         }
     }
 }
