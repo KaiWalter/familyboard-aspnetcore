@@ -26,13 +26,22 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Restore dependencies
-      run: dotnet restore -r linux-arm
+      run: dotnet restore -r linux-arm familyboard-aspnetcore.csproj
 
     - name: Build
-      run: dotnet build --no-restore -r linux-arm --self-contained
+      run: dotnet build --no-restore -r linux-arm --self-contained familyboard-aspnetcore.csproj
 
     - name: Publish
-      run: dotnet publish -r linux-arm --self-contained
+      run: dotnet publish -r linux-arm --self-contained familyboard-aspnetcore.csproj
+
+    - name: Restore dependencies 2
+      run: dotnet restore -r linux-arm ConsoleTest/ConsoleTest.csproj
+
+    - name: Build 2
+      run: dotnet build --no-restore -r linux-arm --self-contained ConsoleTest/ConsoleTest.csproj
+
+    - name: Publish 2
+      run: dotnet publish -r linux-arm --self-contained ConsoleTest/ConsoleTest.csproj
 
     - name: Set up QEMU
       id: qemu

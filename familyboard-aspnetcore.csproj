@@ -10,6 +10,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="ConsoleTest/**" />
+    <Compile Remove="ConsoleTest/**" />
+    <None Remove="ConsoleTest/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.*" />
     <PackageReference Include="Microsoft.Graph" Version="4.*" />
     <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="1.*" />

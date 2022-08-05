@@ -45,5 +45,6 @@ ENV IMAGESPLAYEDPATH=/app/.imagesplayed.json
 
 # application
 COPY ./bin/Debug/net6.0/linux-arm/publish .
+COPY ./ConsoleTest/bin/Debug/net6.0/linux-arm/publish .
 
 ENTRYPOINT ["dotnet", "familyboard-aspnetcore.dll"]
