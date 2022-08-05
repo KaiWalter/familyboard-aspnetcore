@@ -1,0 +1,61 @@
+# >>>>>>>>> not yet working <<<<<<<<<<
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine
+
+ARG RUNTIME_ID=""
+
+RUN apk upgrade --update-cache --available && \
+    apk add openssl tzdata && \
+    rm -rf /var/cache/apk/*
+
+# set our environment variable
+ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
+
+# install libintl
+# then install dev dependencies for musl-locales
+# clone the sources
+# build and install musl-locales
+# remove sources and compile artifacts
+# lastly remove dev dependencies again
+RUN apk --no-cache add libintl && \
+	apk --no-cache --virtual .locale_build add cmake make musl-dev gcc gettext-dev git && \
+	git clone https://gitlab.com/rilian-la-te/musl-locales && \
+	cd musl-locales && cmake -DLOCALE_PROFILE=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install && \
+	cd .. && rm -r musl-locales && \
+	apk del .locale_build
+
+# certificate creation and configuration
+ENV CERTNAME=/tmp/familyboard.pfx
+ARG CERTPASS="not_set"
+ENV CERTPASS=${CERTPASS}
+RUN openssl req -x509 \
+    -passout env:CERTPASS \
+    -subj "/CN=familyboard.my.net" \
+    -newkey rsa:4096 \
+    -keyout /tmp/familyboardkey.pem \
+    -out /tmp/familyboardcert.pem \
+    -days 365
+RUN openssl pkcs12 -export \
+    -out $CERTNAME \
+    -inkey /tmp/familyboardkey.pem \
+    -in /tmp/familyboardcert.pem \
+    -passin env:CERTPASS \
+    -passout env:CERTPASS
+
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS="https://+:5001;http://+:5000"
+ENV ASPNETCORE_HTTPS_PORT=5001
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=$CERTPASS
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=$CERTNAME
+
+# token cache configuration
+WORKDIR /app
+RUN mkdir .tokenkeycache
+ENV TOKENKEYCACHEPATH=/app/.tokenkeycache
+ENV IMAGESPLAYEDPATH=/app/.imagesplayed.json
+
+# application
+COPY ./bin/Debug/net6.0/${RUNTIME_ID}/publish .
+COPY ./ConsoleTest/bin/Debug/net6.0/${RUNTIME_ID}/publish .
+
+ENTRYPOINT ["./familyboard-aspnetcore"]

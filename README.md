@@ -162,6 +162,8 @@ The same applies for the token cache itself. An implementation `IDistributedCach
 
 ## hints
 
+### appsettings.Development.json
+
 before adding secrets to `appsettings.Development.json` remove it from Git tracking:
 
 ```shell
@@ -173,6 +175,13 @@ get it back into tracking
 ```shell
 git update-index --no-assume-unchanged appsettings.Development.json
 ```
+
+### running on alpine arm
+
+- [relevant Docker image tags - SDK](https://hub.docker.com/_/microsoft-dotnet-sdk)
+- [relevant Docker image tags - ASP.NET Core runtime](https://hub.docker.com/_/microsoft-dotnet-aspnet)
+- [relevant runtime identifiers](https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json)
+- <https://grrr.tech/posts/2020/add-locales-to-alpine-linux-docker-image/>
 
 ## still to do
 

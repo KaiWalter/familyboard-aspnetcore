@@ -15,7 +15,9 @@ jobs:
       DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE_PREFIX }}/familyboard-aspnetcore      
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
-      DOCKER_TARGET_PLATFORM: linux/arm/v7  
+      DOCKER_TARGET_PLATFORM: linux/arm64/v8
+      DOCKER_FILE: Dockerfile-debian
+      RUNTIME_ID: linux-arm64
 
     steps:
     - uses: actions/checkout@v2
@@ -26,22 +28,22 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Restore dependencies
-      run: dotnet restore -r linux-arm familyboard-aspnetcore.csproj
+      run: dotnet restore -r ${RUNTIME_ID} familyboard-aspnetcore.csproj
 
     - name: Build
-      run: dotnet build --no-restore -r linux-arm --self-contained familyboard-aspnetcore.csproj
+      run: dotnet build --no-restore -r ${RUNTIME_ID} --self-contained familyboard-aspnetcore.csproj
 
     - name: Publish
-      run: dotnet publish -r linux-arm --self-contained familyboard-aspnetcore.csproj
+      run: dotnet publish -r ${RUNTIME_ID} --self-contained familyboard-aspnetcore.csproj
 
     - name: Restore dependencies 2
-      run: dotnet restore -r linux-arm ConsoleTest/ConsoleTest.csproj
+      run: dotnet restore -r ${RUNTIME_ID} ConsoleTest/ConsoleTest.csproj
 
     - name: Build 2
-      run: dotnet build --no-restore -r linux-arm --self-contained ConsoleTest/ConsoleTest.csproj
+      run: dotnet build --no-restore -r ${RUNTIME_ID} --self-contained ConsoleTest/ConsoleTest.csproj
 
     - name: Publish 2
-      run: dotnet publish -r linux-arm --self-contained ConsoleTest/ConsoleTest.csproj
+      run: dotnet publish -r ${RUNTIME_ID} --self-contained ConsoleTest/ConsoleTest.csproj
 
     - name: Set up QEMU
       id: qemu
@@ -83,8 +85,9 @@ jobs:
         export CERTPASS=`pwgen`
         docker buildx build \
           --platform ${{ steps.prepare.outputs.docker_platform }} \
-          --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
-          --tag ${{ steps.prepare.outputs.docker_image }}:latest \
+          --tag ${{ steps.prepare.outputs.docker_image }}:${RUNTIME_ID} \
+          --tag ${{ steps.prepare.outputs.docker_image }}:${RUNTIME_ID}-${{ steps.prepare.outputs.version }} \
           --build-arg CERTPASS=$CERTPASS \
-          --file ./Dockerfile \
+          --build-arg RUNTIME_ID=${RUNTIME_ID} \
+          --file ./${DOCKER_FILE} \
           --output type=image,push=true .
