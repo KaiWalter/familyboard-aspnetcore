@@ -16,7 +16,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}  
       DOCKER_TARGET_PLATFORM: linux/arm64/v8
-      DOCKER_FILE: Dockerfile-debian
+      DOCKER_FILE: Dockerfile-alpine
       RUNTIME_ID: linux-arm64
 
     steps:
