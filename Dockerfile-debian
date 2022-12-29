@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim
 
 ARG RUNTIME_ID=""
 
+# install tools
+RUN apt install dnsutils
+
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
 ARG CERTPASS="not_set"
