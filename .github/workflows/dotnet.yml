@@ -66,5 +66,5 @@ jobs:
           --platform ${{ steps.prepare.outputs.docker_platform }} \
           --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
           --tag ${{ steps.prepare.outputs.docker_image }}:latest \
-          --file ./Dockerfile \
+          --file ./Dockerfile.ci \
           --output type=image,push=true .
