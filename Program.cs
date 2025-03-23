@@ -1,63 +1,66 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Text.Encodings.Web;
 
-// Configure services
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure services
 builder.Services.AddTokenCache();
-
 builder.Services.AddCookieConfiguration();
-
 builder.Services.AddUIAndApiConfiguration(builder.Configuration);
-
 builder.Services.AddCoreServices();
 
+// Add exception handler
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddProblemDetails();
 
-// Configure and enable middlewares
 var app = builder.Build();
 
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 else
 {
-    app.UseExceptionHandler(errorApp =>
-    {
-        errorApp.Run(async context =>
-        {
-            context.Response.StatusCode = 500;
-            context.Response.ContentType = "text/html";
-
-            var feature = context.Features.Get<IExceptionHandlerFeature>();
-
-            if (feature != null)
-            {
-                await context.Response.WriteAsync($"<h1>Custom Error Page</h1> {HtmlEncoder.Default.Encode(feature.Error.Message)}");
-                await context.Response.WriteAsync($"<hr />{HtmlEncoder.Default.Encode(feature.Error.Source)}");
-            }
-        });
-    });
+    app.UseExceptionHandler();
     app.UseHsts();
 }
 
 app.UseStaticFiles();
-
 app.UseCookiePolicy();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapRazorPages();
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();
+
+// Custom exception handler
+public class CustomExceptionHandler : IExceptionHandler
+{
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    {
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            Title = "An unexpected error occurred",
+            Detail = exception.Message,
+            Instance = httpContext.Request.Path
+        }, cancellationToken: cancellationToken);
+
+        return true;
+    }
+}
+

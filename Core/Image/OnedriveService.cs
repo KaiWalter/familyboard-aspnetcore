@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
+using File = System.IO.File;
 
 namespace FamilyBoard.Core.Image
 {
@@ -101,7 +103,7 @@ namespace FamilyBoard.Core.Image
             await File.WriteAllTextAsync(_imagesPlayedPath, imagesPlayedJson);
         }
 
-        private async Task MergeImagesPlayed(IEnumerable<Microsoft.Graph.DriveItem> filteredImages)
+        private async Task MergeImagesPlayed(IEnumerable<DriveItem> filteredImages)
         {
             // create list of images played if not exists
             if (File.Exists(_imagesPlayedPath))

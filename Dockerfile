@@ -1,5 +1,6 @@
-ARG VARIANT=bullseye-slim-arm32v7
-FROM mcr.microsoft.com/dotnet/sdk:6.0-${VARIANT} AS build-env
+ARG VARIANT=bookworm-slim-arm32v7
+ARG DOTNETVERSION=8.0
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNETVERSION}-${VARIANT} AS build-env
 WORKDIR /App
 
 # Copy everything
@@ -10,7 +11,7 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-${VARIANT}
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNETVERSION}-${VARIANT}
 
 # certificate creation and configuration
 ENV CERTNAME=/tmp/familyboard.pfx
