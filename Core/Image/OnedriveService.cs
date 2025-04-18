@@ -85,6 +85,7 @@ namespace FamilyBoard.Core.Image
                     // update image played counter
                     if (_imagesPlayed.ContainsKey(imageItem.Name))
                     {
+			_logger.LogInformation($"playing {imageItem.Name}");
                         _imagesPlayed[imageItem.Name].Counter++;
                         _imagesPlayed[imageItem.Name].LastPlayed = DateTime.UtcNow;
                     }
