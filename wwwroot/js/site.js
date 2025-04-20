@@ -1,6 +1,10 @@
 ﻿var calendarUpdateCounter = 1;
 var imageUpdateCounter = 1;
 
+window.onerror = function(message, source, lineno, colno, error) {
+  console.error("JS ERROR:", message, "at", source + ":" + lineno);
+};
+
 function startTime() {
   var today = new Date();
   document.querySelector("fb-clock").time = {
@@ -214,7 +218,7 @@ function updateImage() {
 
 function renderImage(imageObj) {
   putMessage("updating image");
-
+  console.log("Load image:", imageObj.src);
   var img = new Image();
   img.onload = function () {
     // imgContainer = document.getElementsByClassName('imageContainer')[0];
@@ -226,7 +230,7 @@ function renderImage(imageObj) {
 
     const imgExisting = imgContainer.querySelector("img");
     if (imgExisting) {
-      imageContainer.removeChild(imgExisting);
+      imgContainer.removeChild(imgExisting);
     }
 
     imgContainer.appendChild(img);
@@ -243,5 +247,6 @@ function renderImage(imageObj) {
   };
   img.src = imageObj.src;
 
+  console.log("Loaded image:", imageObj.src);
   putMessage("");
 }
