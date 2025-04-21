@@ -106,7 +106,7 @@ namespace FamilyBoard.Core.Calendar
 
             }
 
-            result.Sort((x,y) => (x.Date+x.Time).CompareTo(y.Date+y.Time));
+            result.Sort((x, y) => (x.Date + x.Time).CompareTo(y.Date + y.Time));
 
             return result;
         }

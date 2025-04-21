@@ -11,7 +11,7 @@ namespace FamilyBoard.Core.Calendar
     public class SchoolHolidaysService : ICalendarService
     {
         private const string SCHOOLHOLIDAYSURL = "https://ferien-api.de/api/v1/holidays/BW";
-        
+
         private readonly ILogger<SchoolHolidaysService> _logger;
 
         public SchoolHolidaysService(ILogger<SchoolHolidaysService> logger)
@@ -59,7 +59,7 @@ namespace FamilyBoard.Core.Calendar
                             var duration = endsOn - startsOn;
 
                             if (startsOn.CompareTo(endDate) <= 0 && endsOn.CompareTo(startDate) >= 0 &&
-                                duration.CompareTo(new TimeSpan(0)) > 0 && 
+                                duration.CompareTo(new TimeSpan(0)) > 0 &&
                                 name.Length > 1)
                             {
                                 var date = startsOn;

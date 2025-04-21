@@ -32,7 +32,7 @@ namespace FamilyBoard.Application.Controllers
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(ImageResponse), StatusCodes.Status200OK,"application/json")]
+        [ProducesResponseType(typeof(ImageResponse), StatusCodes.Status200OK, "application/json")]
         public async Task<ActionResult<ImageResponse>> GetNextImage()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetNextImage));

@@ -37,7 +37,7 @@ namespace FamilyBoard.Application.Controllers
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(List<CalendarEntry>), StatusCodes.Status200OK,"application/json")]
+        [ProducesResponseType(typeof(List<CalendarEntry>), StatusCodes.Status200OK, "application/json")]
         public async Task<ActionResult<List<CalendarEntry>>> GetCalendarEntries()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetCalendarEntries));
@@ -61,7 +61,7 @@ namespace FamilyBoard.Application.Controllers
         /// </summary>
         [HttpGet("dateformatinfo")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(DateFormatInfo), StatusCodes.Status200OK,"application/json")]
+        [ProducesResponseType(typeof(DateFormatInfo), StatusCodes.Status200OK, "application/json")]
         public ActionResult<DateFormatInfo> GetDateFormatInfo()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetDateFormatInfo));
