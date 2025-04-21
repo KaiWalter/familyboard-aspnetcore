@@ -106,15 +106,28 @@ namespace FamilyBoard.Core.Image
 
         private async Task MergeImagesPlayed(IEnumerable<DriveItem> filteredImages)
         {
-            // create list of images played if not exists
-            if (File.Exists(_imagesPlayedPath))
-            {
-                string json = await File.ReadAllTextAsync(_imagesPlayedPath);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(json);
-                }
-            }
+		// Create list of images played if not exists
+		if (File.Exists(_imagesPlayedPath))
+		{
+		    try
+		    {
+			string json = await File.ReadAllTextAsync(_imagesPlayedPath);
+			if (!string.IsNullOrEmpty(json))
+			{
+			    _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(json);
+			}
+		    }
+		    catch (JsonException ex)
+		    {
+			// Reinitialize the dictionary in case of deserialization failure
+			_imagesPlayed = new Dictionary<string, ImagePlayed>();
+		    }
+		}
+		else
+		{
+		    // Initialize the dictionary if the file does not exist
+		    _imagesPlayed = new Dictionary<string, ImagePlayed>();
+		}
 
             // reset indicator whether image still exists on OneDrive
             foreach (var kv in _imagesPlayed)
