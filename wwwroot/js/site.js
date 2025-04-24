@@ -1,7 +1,7 @@
 ﻿var calendarUpdateCounter = 1;
 var imageUpdateCounter = 1;
 
-window.onerror = function(message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
   console.error("JS ERROR:", message, "at", source + ":" + lineno);
 };
 
@@ -20,25 +20,37 @@ function startMainLoop() {
 }
 
 function MainLoop() {
-  calendarUpdateCounter--;
+  if (calendarUpdateCounter) {
+    calendarUpdateCounter--;
 
-  if (calendarUpdateCounter <= 0) {
-    console.log("update calendar");
-    updateCalendar();
-    calendarUpdateCounter = 300;
+    if (calendarUpdateCounter <= 0) {
+      console.log("update calendar");
+      updateCalendar();
+    }
   }
 
-  imageUpdateCounter--;
+  if (imageUpdateCounter) {
+    imageUpdateCounter--;
 
-  if (imageUpdateCounter <= 0) {
-    console.log("update image");
-    updateImage();
-    imageUpdateCounter = 90;
+    if (imageUpdateCounter <= 0) {
+      console.log("update image");
+      updateImage();
+    }
   }
 
-  putStatus(
-    `next image update ${imageUpdateCounter}s - next calendar update ${calendarUpdateCounter}s`,
-  );
+  let status = "";
+  if (imageUpdateCounter) {
+    status = `next image update ${imageUpdateCounter}s`;
+  }
+  if (calendarUpdateCounter) {
+    if (status) {
+      status += " - ";
+    }
+    status += `next calendar update ${calendarUpdateCounter}s`;
+  }
+  if (status) {
+    putStatus(status);
+  }
 
   var t = setTimeout(MainLoop, 1000);
 }
@@ -71,6 +83,7 @@ function initCalendar() {
 }
 
 function updateCalendar() {
+  calendarUpdateCounter = null;
   initCalendar();
 
   fetch("/api/calendar")
@@ -78,6 +91,7 @@ function updateCalendar() {
     .then((data) => {
       if (data) {
         renderCalendar(data);
+        calendarUpdateCounter = 300;
       }
     });
 }
@@ -217,15 +231,11 @@ function updateImage() {
 }
 
 function renderImage(imageObj) {
+  imageUpdateCounter = null;
   putMessage("updating image");
   console.log("Load image:", imageObj.src);
   var img = new Image();
   img.onload = function () {
-    // imgContainer = document.getElementsByClassName('imageContainer')[0];
-    // imgContainer.style.background = "#000 url(" + imageObj.src + ") center center";
-    // imgContainer.style.backgroundSize = "cover";
-    // imgContainer.style.backgroundRepeat = "no-repeat";
-
     imgContainer = document.getElementsByClassName("imageContainer")[0];
 
     const imgExisting = imgContainer.querySelector("img");
@@ -244,6 +254,7 @@ function renderImage(imageObj) {
       imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
     }
     imgCreated.innerHTML = imageCreatedLabel;
+    imageUpdateCounter = 90;
   };
   img.src = imageObj.src;
 
