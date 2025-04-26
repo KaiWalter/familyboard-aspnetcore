@@ -41,16 +41,19 @@ function MainLoop() {
   let status = "";
   if (imageUpdateCounter) {
     status = `next image update ${imageUpdateCounter}s`;
+  } else {
+    status = "updating image";
   }
+
+  status += " - ";
+
   if (calendarUpdateCounter) {
-    if (status) {
-      status += " - ";
-    }
     status += `next calendar update ${calendarUpdateCounter}s`;
+  } else {
+    status += "updating calendar";
   }
-  if (status) {
-    putStatus(status);
-  }
+
+  putStatus(status);
 
   var t = setTimeout(MainLoop, 1000);
 }
