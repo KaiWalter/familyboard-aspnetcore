@@ -5,21 +5,19 @@ window.onerror = function (message, source, lineno, colno, error) {
   console.error("JS ERROR:", message, "at", source + ":" + lineno);
 };
 
-function startTime() {
+function updateTime() {
   var today = new Date();
-  document.querySelector("fb-clock").time = {
-    hh: today.getHours().toString().padStart(2, "0"),
-    mm: today.getMinutes().toString().padStart(2, "0"),
-    ss: today.getSeconds().toString().padStart(2, "0"),
-  };
-  var t = setTimeout(startTime, 500);
+  var clockElement = document.querySelector("fb-clock");
+  if (clockElement) {
+    clockElement.time = {
+      hh: today.getHours().toString().padStart(2, "0"),
+      mm: today.getMinutes().toString().padStart(2, "0"),
+      ss: today.getSeconds().toString().padStart(2, "0"),
+    };
+  }
 }
 
-function startMainLoop() {
-  MainLoop();
-}
-
-function MainLoop() {
+function updateContent() {
   if (calendarUpdateCounter) {
     calendarUpdateCounter--;
 
@@ -54,8 +52,11 @@ function MainLoop() {
   }
 
   putStatus(status);
+}
 
-  var t = setTimeout(MainLoop, 1000);
+function startMainLoop() {
+  setInterval(updateTime, 500);
+  setInterval(updateContent, 1000);
 }
 
 function putMessage(message) {
