@@ -1,6 +1,9 @@
 ﻿var calendarUpdateCounter = 1;
 var imageUpdateCounter = 1;
 
+const imageUpdateSeconds = 90;
+const calendarUpdateSeconds = 300;
+
 window.onerror = function (message, source, lineno, colno, error) {
   console.error("JS ERROR:", message, "at", source + ":" + lineno);
 };
@@ -95,7 +98,7 @@ function updateCalendar() {
     .then((data) => {
       if (data) {
         renderCalendar(data);
-        calendarUpdateCounter = 300;
+        calendarUpdateCounter = calendarUpdateSeconds;
       }
     });
 }
@@ -237,7 +240,7 @@ function updateImage() {
 function renderImage(imageObj) {
   imageUpdateCounter = null;
   putMessage("updating image");
-  console.log("Load image:", imageObj.src);
+  console.log("Load image:", imageObj.name);
 
   // Set up the new image with transition styles but start with opacity 0
   var img = new Image();
@@ -245,7 +248,7 @@ function renderImage(imageObj) {
   img.style.height = "100%";
   img.style.objectFit = "cover";
   img.style.opacity = "0";
-  img.style.transition = "opacity 1s ease-in-out";
+  img.style.transition = "opacity 0.5s ease-in-out"; // Shorter transition time
 
   img.onload = function () {
     imgContainer = document.getElementsByClassName("imageContainer")[0];
@@ -256,17 +259,21 @@ function renderImage(imageObj) {
 
     if (imgExisting) {
       // Fade out the existing image
-      imgExisting.style.transition = "opacity 1s ease-in-out";
+      imgExisting.style.transition = "opacity 0.5s ease-in-out"; // Shorter transition time
       imgExisting.style.opacity = "0";
 
-      // Remove the old image and fade in the new one after the fade-out completes
+      // Start fading in the new image before the old one is completely gone
+      // This creates an overlap effect rather than a blank period
       setTimeout(function () {
-        imgContainer.removeChild(imgExisting);
-        // Trigger fade-in for the new image
+        img.style.opacity = "1"; // Start fade-in immediately
+
+        // Remove the old image after it's faded out
         setTimeout(function () {
-          img.style.opacity = "1";
-        }, 50); // Small delay to ensure the browser processes the changes separately
-      }, 1000); // Match this to the transition duration
+          if (imgExisting.parentNode === imgContainer) {
+            imgContainer.removeChild(imgExisting);
+          }
+        }, 300); // Remove after fade-out is mostly complete
+      }, 200); // Start fade-in sooner, while old image is still fading out
     } else {
       // If there's no existing image, just fade in the new one
       setTimeout(function () {
@@ -280,10 +287,10 @@ function renderImage(imageObj) {
       imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
     }
     imgCreated.innerHTML = imageCreatedLabel;
-    imageUpdateCounter = 90;
+    imageUpdateCounter = imageUpdateSeconds;
   };
   img.src = imageObj.src;
 
-  console.log("Loaded image:", imageObj.src);
+  console.log("Loaded image:", imageObj.name);
   putMessage("");
 }

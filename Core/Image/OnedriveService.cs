@@ -49,6 +49,7 @@ namespace FamilyBoard.Core.Image
 
             ImageResponse result = new ImageResponse
             {
+                Name = "",
                 Src = "https://dummyimage.com/200x600/000/fff.png&text=FOLDERNOTFOUND"
             };
 
@@ -73,6 +74,7 @@ namespace FamilyBoard.Core.Image
                 {
                     if (imageItem.AdditionalData.ContainsKey("@microsoft.graph.downloadUrl"))
                     {
+                        result.Name = imageItem.Name;
                         result.Src = imageItem.AdditionalData["@microsoft.graph.downloadUrl"].ToString();
                     }
 
