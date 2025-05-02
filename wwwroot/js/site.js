@@ -248,7 +248,7 @@ function renderImage(imageObj) {
   img.style.height = "100%";
   img.style.objectFit = "cover";
   img.style.opacity = "0";
-  img.style.transition = "opacity 0.5s ease-in-out"; // Shorter transition time
+  img.style.transition = "opacity 0.5s ease-in-out";
 
   img.onload = function () {
     imgContainer = document.getElementsByClassName("imageContainer")[0];
@@ -258,27 +258,20 @@ function renderImage(imageObj) {
     imgContainer.appendChild(img);
 
     if (imgExisting) {
+      img.style.opacity = "1"; // Start fade-in immediately
+
       // Fade out the existing image
-      imgExisting.style.transition = "opacity 0.5s ease-in-out"; // Shorter transition time
+      imgExisting.style.transition = "opacity 2s ease-in-out"; // Shorter transition time
       imgExisting.style.opacity = "0";
 
-      // Start fading in the new image before the old one is completely gone
-      // This creates an overlap effect rather than a blank period
+      // Remove the old image after it's faded out
       setTimeout(function () {
-        img.style.opacity = "1"; // Start fade-in immediately
-
-        // Remove the old image after it's faded out
-        setTimeout(function () {
-          if (imgExisting.parentNode === imgContainer) {
-            imgContainer.removeChild(imgExisting);
-          }
-        }, 300); // Remove after fade-out is mostly complete
-      }, 200); // Start fade-in sooner, while old image is still fading out
+        if (imgExisting.parentNode === imgContainer) {
+          imgContainer.removeChild(imgExisting);
+        }
+      }, 2000); // Remove after fade-out is mostly complete
     } else {
-      // If there's no existing image, just fade in the new one
-      setTimeout(function () {
-        img.style.opacity = "1";
-      }, 50);
+      img.style.opacity = "1";
     }
 
     imgCreated = document.getElementsByClassName("imageCreated")[0];
