@@ -238,19 +238,41 @@ function renderImage(imageObj) {
   imageUpdateCounter = null;
   putMessage("updating image");
   console.log("Load image:", imageObj.src);
+
+  // Set up the new image with transition styles but start with opacity 0
   var img = new Image();
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "cover";
+  img.style.opacity = "0";
+  img.style.transition = "opacity 1s ease-in-out";
+
   img.onload = function () {
     imgContainer = document.getElementsByClassName("imageContainer")[0];
-
     const imgExisting = imgContainer.querySelector("img");
-    if (imgExisting) {
-      imgContainer.removeChild(imgExisting);
-    }
 
+    // Add the new image to the container while it's still invisible
     imgContainer.appendChild(img);
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
+
+    if (imgExisting) {
+      // Fade out the existing image
+      imgExisting.style.transition = "opacity 1s ease-in-out";
+      imgExisting.style.opacity = "0";
+
+      // Remove the old image and fade in the new one after the fade-out completes
+      setTimeout(function () {
+        imgContainer.removeChild(imgExisting);
+        // Trigger fade-in for the new image
+        setTimeout(function () {
+          img.style.opacity = "1";
+        }, 50); // Small delay to ensure the browser processes the changes separately
+      }, 1000); // Match this to the transition duration
+    } else {
+      // If there's no existing image, just fade in the new one
+      setTimeout(function () {
+        img.style.opacity = "1";
+      }, 50);
+    }
 
     imgCreated = document.getElementsByClassName("imageCreated")[0];
     var imageCreatedLabel = "";
