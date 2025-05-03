@@ -6,6 +6,7 @@ const calendarUpdateSeconds = 300;
 
 window.onerror = function (message, source, lineno, colno, error) {
   console.error("JS ERROR:", message, "at", source + ":" + lineno);
+  putMessage(message);
 };
 
 function updateTime() {
@@ -262,6 +263,8 @@ function renderImage(imageObj) {
     }
     imgCreated.innerHTML = imageCreatedLabel;
 
+    imageUpdateCounter = imageUpdateSeconds;
+
     setTimeout(function () {
       if (imgExisting) {
         imgExisting.style.opacity = "0";
@@ -270,7 +273,6 @@ function renderImage(imageObj) {
       if (imgExisting) {
         imgContainer.removeChild(imgExisting);
       }
-      imageUpdateCounter = imageUpdateSeconds;
     }, 1000);
   };
   img.src = imageObj.src;
