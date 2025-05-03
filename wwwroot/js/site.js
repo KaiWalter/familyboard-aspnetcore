@@ -241,19 +241,19 @@ function renderImage(imageObj) {
   imageUpdateCounter = null;
   putMessage("updating image");
   console.log("Load image:", imageObj.name);
+  // Set up the new image with transition styles but start with opacity 0
   var img = new Image();
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "cover";
+  img.style.opacity = "0";
+  img.style.transition = "opacity 1s ease-in-out";
+
+  imgContainer = document.getElementsByClassName("imageContainer")[0];
+  const imgExisting = imgContainer.querySelector("img");
+
   img.onload = function () {
-    imgContainer = document.getElementsByClassName("imageContainer")[0];
-
-    const imgExisting = imgContainer.querySelector("img");
-    if (imgExisting) {
-      imgContainer.removeChild(imgExisting);
-    }
-
     imgContainer.appendChild(img);
-    img.style.width = "100%";
-    img.style.height = "100%";
-    img.style.objectFit = "cover";
 
     imgCreated = document.getElementsByClassName("imageCreated")[0];
     var imageCreatedLabel = "";
@@ -261,7 +261,17 @@ function renderImage(imageObj) {
       imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
     }
     imgCreated.innerHTML = imageCreatedLabel;
-    imageUpdateCounter = 90;
+
+    setTimeout(function () {
+      if (imgExisting) {
+        imgExisting.style.opacity = "0";
+      }
+      img.style.opacity = "1";
+      if (imgExisting) {
+        imgContainer.removeChild(imgExisting);
+      }
+      imageUpdateCounter = imageUpdateSeconds;
+    }, 1000);
   };
   img.src = imageObj.src;
 
