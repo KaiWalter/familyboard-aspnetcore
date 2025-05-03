@@ -241,38 +241,19 @@ function renderImage(imageObj) {
   imageUpdateCounter = null;
   putMessage("updating image");
   console.log("Load image:", imageObj.name);
-
-  // Set up the new image with transition styles but start with opacity 0
   var img = new Image();
-  img.style.width = "100%";
-  img.style.height = "100%";
-  img.style.objectFit = "cover";
-  img.style.opacity = "0";
-  img.style.transition = "opacity 0.5s ease-in-out";
-
   img.onload = function () {
     imgContainer = document.getElementsByClassName("imageContainer")[0];
+
     const imgExisting = imgContainer.querySelector("img");
-
-    // Add the new image to the container while it's still invisible
-    imgContainer.appendChild(img);
-
     if (imgExisting) {
-      img.style.opacity = "1"; // Start fade-in immediately
-
-      // Fade out the existing image
-      imgExisting.style.transition = "opacity 2s ease-in-out"; // Shorter transition time
-      imgExisting.style.opacity = "0";
-
-      // Remove the old image after it's faded out
-      setTimeout(function () {
-        if (imgExisting.parentNode === imgContainer) {
-          imgContainer.removeChild(imgExisting);
-        }
-      }, 2000); // Remove after fade-out is mostly complete
-    } else {
-      img.style.opacity = "1";
+      imgContainer.removeChild(imgExisting);
     }
+
+    imgContainer.appendChild(img);
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
 
     imgCreated = document.getElementsByClassName("imageCreated")[0];
     var imageCreatedLabel = "";
@@ -280,7 +261,7 @@ function renderImage(imageObj) {
       imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
     }
     imgCreated.innerHTML = imageCreatedLabel;
-    imageUpdateCounter = imageUpdateSeconds;
+    imageUpdateCounter = 90;
   };
   img.src = imageObj.src;
 
