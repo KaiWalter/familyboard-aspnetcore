@@ -258,18 +258,22 @@ function renderImage(imageObj) {
 
     imgCreated = document.getElementsByClassName("imageCreated")[0];
     var imageCreatedLabel = "";
+    imgCreated.innerHTML = "";
     if (imageObj.month && imageObj.year) {
       imageCreatedLabel = monthNames[imageObj.month - 1] + " " + imageObj.year;
     }
-    imgCreated.innerHTML = imageCreatedLabel;
 
     imageUpdateCounter = imageUpdateSeconds;
 
+    // fade out previous image, fade in new image
     setTimeout(function () {
       if (imgExisting) {
         imgExisting.style.opacity = "0";
       }
+
       img.style.opacity = "1";
+      imgCreated.innerHTML = imageCreatedLabel;
+
       if (imgExisting) {
         imgContainer.removeChild(imgExisting);
       }
