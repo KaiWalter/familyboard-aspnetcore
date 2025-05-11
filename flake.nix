@@ -17,9 +17,13 @@
         dotnetRoot = "${pkgs.dotnet-sdk_8}/share/dotnet";
 
         extensions = with pkgs.vscode-extensions; [
+          github.copilot
+          ms-azuretools.vscode-docker
+          ms-dotnettools.csdevkit
           ms-dotnettools.csharp
           ms-dotnettools.vscode-dotnet-runtime
-          github.copilot
+          ms-vscode-remote.remote-containers
+          vscodevim.vim
         ];
 
         vscode-with-extensions = pkgs.vscode-with-extensions.override {
