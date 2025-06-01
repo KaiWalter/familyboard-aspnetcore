@@ -1,6 +1,6 @@
-﻿using Microsoft.Identity.Client;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Identity.Client;
 
 namespace FamilyBoard.Core.Cache.Entities
 {
@@ -9,9 +9,7 @@ namespace FamilyBoard.Core.Cache.Entities
     // Feel free to include more properties that are relevant to your use case
     public class MsalAccountActivity
     {
-        public MsalAccountActivity()
-        {
-        }
+        public MsalAccountActivity() { }
 
         public MsalAccountActivity(string cacheKey, IAccount account)
         {

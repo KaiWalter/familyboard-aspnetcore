@@ -1,9 +1,9 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
 {
@@ -18,9 +18,11 @@ namespace FamilyBoard.Application.Controllers
 
         private readonly IImageService _imageService;
 
-        public ImageController(ILogger<ImageController> logger,
-                            IConfiguration configuration,
-                            IImageService imageService)
+        public ImageController(
+            ILogger<ImageController> logger,
+            IConfiguration configuration,
+            IImageService imageService
+        )
         {
             _logger = logger;
             _configuration = configuration;
@@ -42,4 +44,3 @@ namespace FamilyBoard.Application.Controllers
         }
     }
 }
-

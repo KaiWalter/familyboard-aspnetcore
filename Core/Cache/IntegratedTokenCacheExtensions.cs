@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.TokenCacheProviders;
 using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
-using System;
 
 namespace FamilyBoard.Core.Cache
 {
@@ -13,7 +13,8 @@ namespace FamilyBoard.Core.Cache
         /// <param name="services">The services collection to add to.</param>
         /// <returns>A <see cref="IServiceCollection"/> to chain.</returns>
         public static IServiceCollection AddIntegratedUserTokenCache(
-            this IServiceCollection services)
+            this IServiceCollection services
+        )
         {
             _ = services ?? throw new ArgumentNullException(nameof(services));
 
@@ -26,7 +27,8 @@ namespace FamilyBoard.Core.Cache
         /// <param name="builder">The Authentication builder to add to.</param>
         /// <returns>A <see cref="AuthenticationBuilder"/> to chain.</returns>
         public static MicrosoftIdentityAppCallsWebApiAuthenticationBuilder AddIntegratedUserTokenCache(
-            this MicrosoftIdentityAppCallsWebApiAuthenticationBuilder builder)
+            this MicrosoftIdentityAppCallsWebApiAuthenticationBuilder builder
+        )
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
 

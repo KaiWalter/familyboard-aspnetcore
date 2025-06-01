@@ -8,7 +8,10 @@ namespace FamilyBoard.Core.Cache
 {
     public static class DiskCacheExtensions
     {
-        public static IServiceCollection AddDiskCache(this IServiceCollection services, Action<DiskCacheOptions> configureAction)
+        public static IServiceCollection AddDiskCache(
+            this IServiceCollection services,
+            Action<DiskCacheOptions> configureAction
+        )
         {
             var options = new DiskCacheOptions();
             configureAction(options);
@@ -20,5 +23,4 @@ namespace FamilyBoard.Core.Cache
             return services;
         }
     }
-
 }

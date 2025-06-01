@@ -1,4 +1,5 @@
-﻿using FamilyBoard.Core.Cache.Entities;
+﻿using System.Threading.Tasks;
+using FamilyBoard.Core.Cache.Entities;
 using FamilyBoard.Core.Cache.Stores;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Web.TokenCacheProviders.Distributed;
-using System.Threading.Tasks;
 
 namespace FamilyBoard.Core.Cache
 {
@@ -21,7 +21,9 @@ namespace FamilyBoard.Core.Cache
             IServiceScopeFactory scopeFactory,
             IDistributedCache distributedCache,
             IOptions<MsalDistributedTokenCacheAdapterOptions> cacheOptions,
-            ILogger<MsalDistributedTokenCacheAdapter> logger) : base(distributedCache, cacheOptions, logger)
+            ILogger<MsalDistributedTokenCacheAdapter> logger
+        )
+            : base(distributedCache, cacheOptions, logger)
         {
             this._scopeFactory = scopeFactory;
             this._logger = logger;
@@ -44,7 +46,8 @@ namespace FamilyBoard.Core.Cache
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var _integratedTokenCacheStore = scope.ServiceProvider.GetRequiredService<IMsalAccountActivityStore>();
+                var _integratedTokenCacheStore =
+                    scope.ServiceProvider.GetRequiredService<IMsalAccountActivityStore>();
 
                 await _integratedTokenCacheStore.UpsertMsalAccountActivity(accountActivity);
 

@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Options;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FamilyBoard.Core.Cache
 {
@@ -16,7 +16,10 @@ namespace FamilyBoard.Core.Cache
 
         private readonly ILogger<DiskCacheHandler> _logger;
 
-        public DiskCacheHandler(IOptions<DiskCacheOptions> options, ILogger<DiskCacheHandler> logger)
+        public DiskCacheHandler(
+            IOptions<DiskCacheOptions> options,
+            ILogger<DiskCacheHandler> logger
+        )
         {
             _cachePath = options.Value.CachePath;
             _logger = logger;
@@ -79,7 +82,12 @@ namespace FamilyBoard.Core.Cache
             await this.SetPrivate(key, value);
         }
 
-        public async Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
+        public async Task SetAsync(
+            string key,
+            byte[] value,
+            DistributedCacheEntryOptions options,
+            CancellationToken token = default
+        )
         {
             await this.SetPrivate(key, value);
         }

@@ -7,9 +7,7 @@ namespace FamilyBoard.Core.Graph
     // will be sent as parameter to AcquireTokenSilent, so Msal can grab to cached token for that particular user account.
     public class MsalAccount : IAccount
     {
-        public MsalAccount()
-        {
-        }
+        public MsalAccount() { }
 
         public MsalAccount(string objectId, string tenantId)
         {

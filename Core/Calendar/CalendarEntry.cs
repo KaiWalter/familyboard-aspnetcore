@@ -12,6 +12,5 @@ namespace FamilyBoard.Core.Calendar
         public bool AllDayEvent { get; set; }
         public bool PublicHoliday { get; set; }
         public bool SchoolHoliday { get; set; }
-
     }
 }

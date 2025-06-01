@@ -19,16 +19,21 @@ namespace FamilyBoard.Core.Image
         private readonly IConfiguration _configuration;
         private readonly string _imagesPlayedPath;
 
-        private Dictionary<string, ImagePlayed> _imagesPlayed = new Dictionary<string, ImagePlayed>();
+        private Dictionary<string, ImagePlayed> _imagesPlayed =
+            new Dictionary<string, ImagePlayed>();
 
-        public OnedriveService(ILogger<OnedriveService> logger,
-                            IConfiguration configuration,
-                            IGraphService graphService)
+        public OnedriveService(
+            ILogger<OnedriveService> logger,
+            IConfiguration configuration,
+            IGraphService graphService
+        )
         {
             _logger = logger;
             _configuration = configuration;
             _graphService = graphService;
-            _imagesPlayedPath = System.Environment.GetEnvironmentVariable("IMAGESPLAYEDPATH") ?? ".imagesplayed.json";
+            _imagesPlayedPath =
+                System.Environment.GetEnvironmentVariable("IMAGESPLAYEDPATH")
+                ?? ".imagesplayed.json";
         }
 
         public async Task<ImageResponse> GetNextImage()
@@ -38,44 +43,50 @@ namespace FamilyBoard.Core.Image
             string folderName = _configuration["Images:FolderName"] ?? "Pictures";
 
             var images = await graphServiceClient
-                        .Me
-                        .Drive
-                        .Root
-                        .ItemWithPath(folderName)
-                        .Children
-                        .Request()
-                        .Top(999)
-                        .GetAsync();
+                .Me.Drive.Root.ItemWithPath(folderName)
+                .Children.Request()
+                .Top(999)
+                .GetAsync();
 
             ImageResponse result = new ImageResponse
             {
                 Name = "",
-                Src = "https://dummyimage.com/200x600/000/fff.png&text=FOLDERNOTFOUND"
+                Src = "https://dummyimage.com/200x600/000/fff.png&text=FOLDERNOTFOUND",
             };
 
-            var filteredImages = images
-                .CurrentPage
-                .Where(child => child.Image != null && child.Photo != null);
+            var filteredImages = images.CurrentPage.Where(child =>
+                child.Image != null && child.Photo != null
+            );
 
             if (filteredImages.Count() > 0)
             {
                 await MergeImagesPlayed(filteredImages);
 
                 // choose random image - only choose from first half based on sort order
-                var imageList = _imagesPlayed.ToList().OrderBy(x => x.Value.Counter).ThenBy(x => x.Value.LastPlayed).ToArray();
+                var imageList = _imagesPlayed
+                    .ToList()
+                    .OrderBy(x => x.Value.Counter)
+                    .ThenBy(x => x.Value.LastPlayed)
+                    .ToArray();
                 var rnd = new Random();
-                var index = rnd.Next(imageList.Count() < 10 ? imageList.Count() : imageList.Count() / 2);
+                var index = rnd.Next(
+                    imageList.Count() < 10 ? imageList.Count() : imageList.Count() / 2
+                );
                 var selectedImage = imageList[index];
 
                 // find choosen image in OneDrive filtered list
-                var imageItem = filteredImages.Where(x => x.Name == selectedImage.Key).FirstOrDefault();
+                var imageItem = filteredImages
+                    .Where(x => x.Name == selectedImage.Key)
+                    .FirstOrDefault();
 
                 if (imageItem != null)
                 {
                     if (imageItem.AdditionalData.ContainsKey("@microsoft.graph.downloadUrl"))
                     {
                         result.Name = imageItem.Name;
-                        result.Src = imageItem.AdditionalData["@microsoft.graph.downloadUrl"].ToString();
+                        result.Src = imageItem
+                            .AdditionalData["@microsoft.graph.downloadUrl"]
+                            .ToString();
                     }
 
                     if (imageItem.Photo.TakenDateTime.HasValue)
@@ -91,7 +102,6 @@ namespace FamilyBoard.Core.Image
                         _imagesPlayed[imageItem.Name].Counter++;
                         _imagesPlayed[imageItem.Name].LastPlayed = DateTime.UtcNow;
                     }
-
                 }
 
                 await PersistImagesPlayed();
@@ -116,7 +126,9 @@ namespace FamilyBoard.Core.Image
                     string json = await File.ReadAllTextAsync(_imagesPlayedPath);
                     if (!string.IsNullOrEmpty(json))
                     {
-                        _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(json);
+                        _imagesPlayed = JsonSerializer.Deserialize<Dictionary<string, ImagePlayed>>(
+                            json
+                        );
                     }
                 }
                 catch (JsonException)
@@ -146,17 +158,24 @@ namespace FamilyBoard.Core.Image
                 }
                 else
                 {
-                    _imagesPlayed.Add(imageMergeItem.Name, new ImagePlayed
-                    {
-                        Counter = 0,
-                        LastPlayed = DateTime.MinValue,
-                        Exists = true,
-                    });
+                    _imagesPlayed.Add(
+                        imageMergeItem.Name,
+                        new ImagePlayed
+                        {
+                            Counter = 0,
+                            LastPlayed = DateTime.MinValue,
+                            Exists = true,
+                        }
+                    );
                 }
             }
 
             // reset all counters if all images have been played >= x times
-            var firstItem = _imagesPlayed.ToList().OrderBy(x => x.Value.Counter).ThenBy(x => x.Value.LastPlayed).First();
+            var firstItem = _imagesPlayed
+                .ToList()
+                .OrderBy(x => x.Value.Counter)
+                .ThenBy(x => x.Value.LastPlayed)
+                .First();
             if (firstItem.Value.Counter >= RESET_PLAYED_IMAGES_MIN_COUNTER)
             {
                 foreach (var kv in _imagesPlayed)

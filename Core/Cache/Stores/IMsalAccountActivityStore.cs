@@ -1,7 +1,7 @@
-﻿using FamilyBoard.Core.Cache.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FamilyBoard.Core.Cache.Entities;
 
 namespace FamilyBoard.Core.Cache.Stores
 {
@@ -11,7 +11,9 @@ namespace FamilyBoard.Core.Cache.Stores
     {
         Task UpsertMsalAccountActivity(MsalAccountActivity msalAccountActivity);
 
-        Task<IEnumerable<MsalAccountActivity>> GetMsalAccountActivitesSince(DateTime lastActivityDate);
+        Task<IEnumerable<MsalAccountActivity>> GetMsalAccountActivitesSince(
+            DateTime lastActivityDate
+        );
 
         Task<MsalAccountActivity> GetMsalAccountActivityForUser(string userPrincipalName);
 

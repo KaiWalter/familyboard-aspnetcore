@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
 using FamilyBoard.Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
 
 namespace FamilyBoard.Application.Controllers
 {
@@ -22,22 +22,27 @@ namespace FamilyBoard.Application.Controllers
 
         private readonly IEnumerable<ICalendarService> _calendarServices;
 
-        public CalendarController(ILogger<CalendarController> logger,
-                            IConfiguration configuration,
-                            IEnumerable<ICalendarService> calendarServices)
+        public CalendarController(
+            ILogger<CalendarController> logger,
+            IConfiguration configuration,
+            IEnumerable<ICalendarService> calendarServices
+        )
         {
             _logger = logger;
             _configuration = configuration;
             _calendarServices = calendarServices;
         }
 
-
         /// <summary>
         /// Retrieves all calendar entries.
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(List<CalendarEntry>), StatusCodes.Status200OK, "application/json")]
+        [ProducesResponseType(
+            typeof(List<CalendarEntry>),
+            StatusCodes.Status200OK,
+            "application/json"
+        )]
         public async Task<ActionResult<List<CalendarEntry>>> GetCalendarEntries()
         {
             _logger.LogTrace("REQUEST:" + nameof(GetCalendarEntries));
@@ -49,7 +54,12 @@ namespace FamilyBoard.Application.Controllers
 
             foreach (var calendarService in _calendarServices)
             {
-                var serviceResult = await calendarService.GetEvents(startTime, endTime, false, false);
+                var serviceResult = await calendarService.GetEvents(
+                    startTime,
+                    endTime,
+                    false,
+                    false
+                );
                 result.AddRange(serviceResult);
             }
 
@@ -72,7 +82,7 @@ namespace FamilyBoard.Application.Controllers
             var result = new DateFormatInfo
             {
                 MonthNames = new List<string>(12),
-                WeekDayNames = new List<string>(7)
+                WeekDayNames = new List<string>(7),
             };
 
             for (var m = 1; m <= 12; m++)
@@ -92,4 +102,3 @@ namespace FamilyBoard.Application.Controllers
         }
     }
 }
-

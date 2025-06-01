@@ -1,19 +1,24 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Graph;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Graph;
 
 namespace FamilyBoard.Core.Graph
 {
     // Factory to instantiate the GraphServiceClient to be used to call Graph
     public class GraphServiceClientFactory
     {
-        public static GraphServiceClient GetAuthenticatedGraphClient(Func<Task<string>> acquireAccessToken,
-                                                                                 string baseUrl)
+        public static GraphServiceClient GetAuthenticatedGraphClient(
+            Func<Task<string>> acquireAccessToken,
+            string baseUrl
+        )
         {
-            return new GraphServiceClient(baseUrl, new CustomAuthenticationProvider(acquireAccessToken));
+            return new GraphServiceClient(
+                baseUrl,
+                new CustomAuthenticationProvider(acquireAccessToken)
+            );
         }
     }
 
@@ -31,7 +36,10 @@ namespace FamilyBoard.Core.Graph
             string accessToken = await acquireAccessToken.Invoke();
 
             // Append the access token to the request.
-            request.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue(
+                JwtBearerDefaults.AuthenticationScheme,
+                accessToken
+            );
         }
     }
 }
