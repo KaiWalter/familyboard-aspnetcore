@@ -105,7 +105,7 @@ public static class StartupExtensions
         // Add all calendar services - sequence listed here reflects sequence calendar types are displayed on calendar within a day
         services.AddTransient<ICalendarService, SchoolHolidaysService>();
         services.AddTransient<ICalendarService, PublicHolidaysService>();
-        services.AddTransient<ICalendarService, OutlookService>();
+        services.AddTransient<ICalendarService, OutlookSimpleService>();
 
         // Add only one image service
         services.AddTransient<IImageService, OnedriveService>();
