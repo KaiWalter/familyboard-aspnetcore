@@ -55,6 +55,7 @@ namespace FamilyBoard.Core.Calendar
             {
                 var calendars = await graphServiceClient
                     .Me.Calendars.Request()
+                    .Select("id,name")
                     .Filter(filterClause)
                     .GetAsync();
 
