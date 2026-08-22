@@ -138,7 +138,7 @@ export XAUTHORITY=/home/pi/.Xauthority
 
 matchbox-window-manager -use_cursor no -use_titlebar no &
 
-chromium-browser --noerrdialogs --check-for-update-interval=1 --simulate-critical-update --incognito --disable-infobars --kiosk --start-fullscreen http://homeserver.fritz.box:5000/
+chromium-browser --noerrdialogs --check-for-update-interval=1 --simulate-critical-update --incognito --disable-infobars --kiosk --start-fullscreen http://<family-board-host>:5000/
 ```
 
 - make it executable
